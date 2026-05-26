@@ -1,10 +1,10 @@
 import { Router } from 'express'
-import { pdfStore } from '../pdf/generator.js'
+import { getPdf } from '../pdf/generator.js'
 
 const router = Router()
 
 router.get('/:id', (req, res) => {
-  const pdf = pdfStore.get(req.params.id)
+  const pdf = getPdf(req.params.id)
   if (!pdf) {
     res.status(404).json({ error: 'PDF not found' })
     return
