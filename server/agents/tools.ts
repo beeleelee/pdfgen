@@ -37,23 +37,42 @@ export const tools = {
     }) => {
       const entry = templateRegistry.get(template)
       if (!entry) {
-        throw new Error(`Unknown template: ${template}`)
+        console.error(`[render_pdf] Unknown template: ${template}`)
+        return { error: `Unknown template: ${template}` }
       }
 
       const parsed = entry.schema.safeParse(data)
       if (!parsed.success) {
-        throw new Error(
-          `Invalid data for template "${template}": ${parsed.error.message}`
+        console.error(
+          `[render_pdf] Validation error for ${template}:`,
+          parsed.error.message
         )
+        return { error: `Invalid data: ${parsed.error.message}` }
       }
 
-      const html = renderToStaticMarkup(
-        React.createElement(entry.component, { data: parsed.data })
-      )
+      let html: string
+      try {
+        html = renderToStaticMarkup(
+          React.createElement(entry.component, { data: parsed.data })
+        )
+      } catch (err) {
+        console.error('[render_pdf] React render error:', err)
+        return { error: `Failed to render template: ${err}` }
+      }
+
       const fullHtml = wrapHtml(html)
-      const pdfBuffer = await generatePdf(fullHtml)
+
+      let pdfBuffer: Buffer
+      try {
+        pdfBuffer = await generatePdf(fullHtml)
+      } catch (err) {
+        console.error('[render_pdf] Playwright PDF generation error:', err)
+        return { error: `Failed to generate PDF: ${err}` }
+      }
+
       const pdfId = uuid()
       storePdf(pdfId, pdfBuffer)
+      console.log(`[render_pdf] Generated ${template} PDF: ${pdfId}`)
 
       return {
         pdfId,
