@@ -1,5 +1,6 @@
 import React from 'react'
 import { z } from 'zod'
+import { theme } from './theme.js'
 
 export const ExperienceSchema = z.object({
   company: z.string().describe('Company or organization name'),
@@ -44,133 +45,136 @@ export const ResumeDataSchema = z.object({
 
 export type ResumeData = z.infer<typeof ResumeDataSchema>
 
-const styles = {
-  container: {
-    fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
+const s = {
+  page: {
+    fontFamily: theme.fonts.sans,
     maxWidth: '800px',
     margin: '0 auto',
     padding: '40px',
-    color: '#333',
-    fontSize: '11px',
+    color: theme.colors.text,
+    fontSize: theme.fontSize.base,
     lineHeight: '1.5',
   },
   header: {
-    textAlign: 'center' as const,
-    borderBottom: '2px solid #1e293b',
-    paddingBottom: '15px',
-    marginBottom: '20px',
+    borderBottom: `${theme.borderWidth.md} solid ${theme.colors.primary}`,
+    paddingBottom: theme.spacing.xl,
+    marginBottom: theme.spacing.section,
   },
   name: {
-    fontSize: '28px',
+    fontSize: theme.fontSize.xxl,
     fontWeight: '700',
-    color: '#1e293b',
+    color: theme.colors.primary,
     margin: '0 0 4px 0',
     letterSpacing: '1px',
-    textTransform: 'uppercase' as const,
   },
-  title: {
-    fontSize: '14px',
-    color: '#475569',
-    margin: '0 0 8px 0',
-    fontWeight: '400',
+  titleLine: {
+    fontSize: theme.fontSize.lg,
+    color: theme.colors.textSecondary,
+    marginBottom: theme.spacing.sm,
   },
   contactRow: {
-    fontSize: '10px',
-    color: '#64748b',
+    fontSize: theme.fontSize.sm,
+    color: theme.colors.muted,
     display: 'flex',
-    justifyContent: 'center',
     gap: '16px',
     flexWrap: 'wrap' as const,
   },
   section: {
-    marginBottom: '18px',
+    marginBottom: theme.spacing.xl,
+    ...theme.print.avoidBreak,
   },
   sectionTitle: {
-    fontSize: '12px',
+    fontSize: theme.fontSize.md,
     fontWeight: '700',
-    color: '#1e293b',
+    color: theme.colors.primary,
     textTransform: 'uppercase' as const,
     letterSpacing: '1.5px',
-    borderBottom: '1px solid #e2e8f0',
-    paddingBottom: '4px',
-    marginBottom: '8px',
+    borderBottom: `${theme.borderWidth.sm} solid ${theme.colors.border}`,
+    paddingBottom: theme.spacing.xs,
+    marginBottom: theme.spacing.md,
   },
-  summaryText: {
-    color: '#475569',
+  summary: {
+    color: theme.colors.textSecondary,
     lineHeight: '1.6',
+    fontSize: theme.fontSize.base,
   },
-  experienceItem: {
-    marginBottom: '12px',
+  expBlock: {
+    marginBottom: theme.spacing.lg,
+    ...theme.print.avoidBreak,
   },
   expHeader: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'baseline',
-    marginBottom: '3px',
+    marginBottom: theme.spacing.xs,
   },
-  companyRole: {
+  expRole: {
     fontWeight: '700',
-    fontSize: '12px',
-    color: '#1e293b',
+    fontSize: theme.fontSize.lg,
+    color: theme.colors.text,
   },
-  dates: {
-    fontSize: '10px',
-    color: '#64748b',
+  expCompany: {
+    fontWeight: '400',
+    color: theme.colors.textSecondary,
+  },
+  expDates: {
+    fontSize: theme.fontSize.sm,
+    color: theme.colors.muted,
     whiteSpace: 'nowrap' as const,
   },
   bulletList: {
     margin: '4px 0 0 0',
     paddingLeft: '18px',
-    color: '#475569',
+    color: theme.colors.textSecondary,
   },
-  bulletItem: {
-    marginBottom: '2px',
+  bullet: {
+    marginBottom: theme.spacing.xs,
   },
-  eduItem: {
+  eduRow: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'baseline',
-    marginBottom: '4px',
+    marginBottom: theme.spacing.sm,
   },
-  institution: {
+  eduSchool: {
     fontWeight: '600',
-    fontSize: '11px',
-    color: '#1e293b',
+    color: theme.colors.text,
   },
-  degree: {
-    color: '#475569',
+  eduDetail: {
+    color: theme.colors.textSecondary,
   },
   eduYear: {
-    fontSize: '10px',
-    color: '#64748b',
+    fontSize: theme.fontSize.sm,
+    color: theme.colors.muted,
     whiteSpace: 'nowrap' as const,
   },
-  skillsList: {
+  skillsWrap: {
     display: 'flex',
     flexWrap: 'wrap' as const,
-    gap: '4px',
+    gap: '6px',
   },
-  skillItem: {
-    backgroundColor: '#f1f5f9',
-    padding: '2px 8px',
-    borderRadius: '3px',
-    fontSize: '10px',
-    color: '#334155',
+  skillPill: {
+    backgroundColor: theme.colors.bgHighlight,
+    color: theme.colors.primary,
+    padding: '3px 10px',
+    borderRadius: theme.borderRadius.md,
+    fontSize: theme.fontSize.sm,
+    fontWeight: '500',
   },
-  certItem: {
-    marginBottom: '3px',
-    fontSize: '10px',
-    color: '#475569',
+  certLine: {
+    marginBottom: theme.spacing.xs,
+    fontSize: theme.fontSize.base,
+    color: theme.colors.textSecondary,
   },
 }
 
 export function ResumeTemplate({ data }: { data: ResumeData }) {
   return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        <h1 style={styles.name}>{data.name}</h1>
-        <div style={styles.title}>{data.title}</div>
-        <div style={styles.contactRow}>
+    <div style={s.page}>
+      <div style={s.header}>
+        <h1 style={s.name}>{data.name}</h1>
+        <div style={s.titleLine}>{data.title}</div>
+        <div style={s.contactRow}>
           <span>{data.contact.email}</span>
           <span>{data.contact.phone}</span>
           {data.contact.linkedin && <span>{data.contact.linkedin}</span>}
@@ -178,67 +182,63 @@ export function ResumeTemplate({ data }: { data: ResumeData }) {
         </div>
       </div>
 
-      <div style={styles.section}>
-        <div style={styles.sectionTitle}>Professional Summary</div>
-        <div style={styles.summaryText}>{data.summary}</div>
+      <div style={s.section}>
+        <div style={s.sectionTitle}>Professional Summary</div>
+        <div style={s.summary}>{data.summary}</div>
       </div>
 
-      <div style={styles.section}>
-        <div style={styles.sectionTitle}>Experience</div>
+      <div style={s.section}>
+        <div style={s.sectionTitle}>Experience</div>
         {data.experience.map((exp, i) => (
-          <div key={i} style={styles.experienceItem}>
-            <div style={styles.expHeader}>
-              <span style={styles.companyRole}>
-                {exp.role} at {exp.company}
+          <div key={i} style={s.expBlock}>
+            <div style={s.expHeader}>
+              <span style={s.expRole}>
+                <span style={s.expRole}>{exp.role}</span>
+                <span style={s.expCompany}> at {exp.company}</span>
               </span>
-              <span style={styles.dates}>
-                {exp.startDate} — {exp.endDate}
+              <span style={s.expDates}>
+                {exp.startDate} — {exp.endDate || 'Present'}
               </span>
             </div>
-            <ul style={styles.bulletList}>
+            <ul style={s.bulletList}>
               {exp.bulletPoints.map((bp, j) => (
-                <li key={j} style={styles.bulletItem}>
-                  {bp}
-                </li>
+                <li key={j} style={s.bullet}>{bp}</li>
               ))}
             </ul>
           </div>
         ))}
       </div>
 
-      <div style={styles.section}>
-        <div style={styles.sectionTitle}>Education</div>
+      <div style={s.section}>
+        <div style={s.sectionTitle}>Education</div>
         {data.education.map((edu, i) => (
-          <div key={i} style={styles.eduItem}>
+          <div key={i} style={s.eduRow}>
             <span>
-              <span style={styles.institution}>{edu.institution}</span>
-              <span style={styles.degree}>
-                {' '}
-                — {edu.degree} in {edu.field}
-              </span>
+              <span style={s.eduSchool}>{edu.institution}</span>
+              <span style={s.eduDetail}> — {edu.degree} in {edu.field}</span>
             </span>
-            <span style={styles.eduYear}>{edu.year}</span>
+            <span style={s.eduYear}>{edu.year}</span>
           </div>
         ))}
       </div>
 
-      <div style={styles.section}>
-        <div style={styles.sectionTitle}>Skills</div>
-        <div style={styles.skillsList}>
+      <div style={s.section}>
+        <div style={s.sectionTitle}>Skills</div>
+        <div style={s.skillsWrap}>
           {data.skills.map((skill, i) => (
-            <span key={i} style={styles.skillItem}>
-              {skill}
-            </span>
+            <span key={i} style={s.skillPill}>{skill}</span>
           ))}
         </div>
       </div>
 
       {data.certifications && data.certifications.length > 0 && (
-        <div style={styles.section}>
-          <div style={styles.sectionTitle}>Certifications</div>
+        <div style={s.section}>
+          <div style={s.sectionTitle}>Certifications</div>
           {data.certifications.map((cert, i) => (
-            <div key={i} style={styles.certItem}>
-              <strong>{cert.name}</strong> — {cert.issuer} ({cert.year})
+            <div key={i} style={s.certLine}>
+              <strong>{cert.name}</strong>
+              {cert.issuer && <> — {cert.issuer}</>}
+              {cert.year && <> ({cert.year})</>}
             </div>
           ))}
         </div>
