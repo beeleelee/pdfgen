@@ -3,33 +3,32 @@ import { z } from 'zod'
 import { theme } from './theme.js'
 
 export const InvoiceDataSchema = z.object({
-  invoiceNumber: z.string().describe('Unique invoice identifier'),
-  issueDate: z.coerce.string().describe('Date of issue (e.g. 2024-01-15)'),
-  dueDate: z.coerce.string().describe('Payment due date (e.g. 2024-02-15)'),
+  invoiceNumber: z.string().optional().describe('Unique invoice identifier'),
+  issueDate: z.coerce.string().optional().describe('Date of issue (e.g. 2024-01-15)'),
+  dueDate: z.coerce.string().optional().describe('Payment due date (e.g. 2024-02-15)'),
   sender: z.object({
     name: z.string(),
-    address: z.string(),
-    email: z.string().email(),
+    address: z.string().optional(),
+    email: z.string().optional(),
   }),
   recipient: z.object({
     name: z.string(),
-    address: z.string(),
-    email: z.string().email().optional(),
+    address: z.string().optional(),
+    email: z.string().optional(),
   }),
   lineItems: z
     .array(
       z.object({
         description: z.string(),
-        quantity: z.coerce.number().positive(),
-        rate: z.coerce.number().positive(),
-        amount: z.coerce.number().positive(),
+        quantity: z.coerce.number().positive().optional().default(1),
+        rate: z.coerce.number().positive().optional().default(0),
+        amount: z.coerce.number().positive().optional().default(0),
       })
-    )
-    .min(1),
-  subtotal: z.coerce.number().nonnegative(),
+    ),
+  subtotal: z.coerce.number().nonnegative().optional(),
   tax: z.coerce.number().nonnegative().optional(),
   taxRate: z.coerce.number().nonnegative().optional(),
-  total: z.coerce.number().nonnegative(),
+  total: z.coerce.number().nonnegative().optional(),
   notes: z.string().optional(),
 })
 
@@ -176,15 +175,29 @@ function fmt(n: number): string {
   return `$${n.toFixed(2)}`
 }
 
+function computeSubtotal(items: InvoiceData['lineItems']): number {
+  return items.reduce((sum, item) => sum + (item.amount || item.quantity * item.rate || 0), 0)
+}
+
+function formatDate(d: string): string {
+  if (d) return d
+  const now = new Date()
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
+}
+
 export function InvoiceTemplate({ data }: { data: InvoiceData }) {
+  const items = data.lineItems || []
+  const subtotal = data.subtotal ?? computeSubtotal(items)
+  const total = data.total ?? (subtotal + (data.tax || 0))
+
   return (
     <div style={s.page}>
       <div style={s.header}>
         <h1 style={s.title}>Invoice</h1>
         <div style={s.meta}>
-          <div><span style={s.metaLabel}>Invoice:</span> {data.invoiceNumber}</div>
-          <div><span style={s.metaLabel}>Issued:</span> {data.issueDate}</div>
-          <div><span style={s.metaLabel}>Due:</span> {data.dueDate}</div>
+          <div><span style={s.metaLabel}>Invoice:</span> {data.invoiceNumber || 'INV-001'}</div>
+          <div><span style={s.metaLabel}>Issued:</span> {formatDate(data.issueDate || '')}</div>
+          <div><span style={s.metaLabel}>Due:</span> {formatDate(data.dueDate || '')}</div>
         </div>
       </div>
 
@@ -192,54 +205,58 @@ export function InvoiceTemplate({ data }: { data: InvoiceData }) {
         <div style={s.addressCol}>
           <div style={s.sectionLabel}>From</div>
           <div style={s.addressName}>{data.sender.name}</div>
-          <div>{data.sender.address}</div>
-          <div>{data.sender.email}</div>
+          {data.sender.address && <div>{data.sender.address}</div>}
+          {data.sender.email && <div>{data.sender.email}</div>}
         </div>
         <div style={s.addressCol}>
           <div style={s.sectionLabel}>To</div>
           <div style={s.addressName}>{data.recipient.name}</div>
-          <div>{data.recipient.address}</div>
+          {data.recipient.address && <div>{data.recipient.address}</div>}
           {data.recipient.email && <div>{data.recipient.email}</div>}
         </div>
       </div>
 
-      <table style={s.table}>
-        <thead>
-          <tr>
-            <th style={s.th}>Description</th>
-            <th style={s.thRight}>Qty</th>
-            <th style={s.thRight}>Rate</th>
-            <th style={s.thRight}>Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.lineItems.map((item, i) => (
-            <tr key={i}>
-              <td style={s.td}>{item.description}</td>
-              <td style={s.tdRight}>{item.quantity}</td>
-              <td style={s.tdRight}>{fmt(item.rate)}</td>
-              <td style={s.tdRight}>{fmt(item.amount)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      {items.length > 0 && (
+        <>
+          <table style={s.table}>
+            <thead>
+              <tr>
+                <th style={s.th}>Description</th>
+                <th style={s.thRight}>Qty</th>
+                <th style={s.thRight}>Rate</th>
+                <th style={s.thRight}>Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((item, i) => (
+                <tr key={i}>
+                  <td style={s.td}>{item.description}</td>
+                  <td style={s.tdRight}>{item.quantity}</td>
+                  <td style={s.tdRight}>{fmt(item.rate)}</td>
+                  <td style={s.tdRight}>{fmt(item.amount || item.quantity * item.rate)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
 
-      <div style={s.totals}>
-        <div style={s.totalRow}>
-          <span>Subtotal</span>
-          <span style={s.totalValue}>{fmt(data.subtotal)}</span>
-        </div>
-        {data.tax !== undefined && (
-          <div style={s.totalRow}>
-            <span>Tax{data.taxRate ? ` (${data.taxRate}%)` : ''}</span>
-            <span style={s.totalValue}>{fmt(data.tax)}</span>
+          <div style={s.totals}>
+            <div style={s.totalRow}>
+              <span>Subtotal</span>
+              <span style={s.totalValue}>{fmt(subtotal)}</span>
+            </div>
+            {data.tax !== undefined && (
+              <div style={s.totalRow}>
+                <span>Tax{data.taxRate ? ` (${data.taxRate}%)` : ''}</span>
+                <span style={s.totalValue}>{fmt(data.tax)}</span>
+              </div>
+            )}
+            <div style={s.grandTotal}>
+              <span>Total Due</span>
+              <span>{fmt(total)}</span>
+            </div>
           </div>
-        )}
-        <div style={s.grandTotal}>
-          <span>Total Due</span>
-          <span>{fmt(data.total)}</span>
-        </div>
-      </div>
+        </>
+      )}
 
       {data.notes && (
         <div style={s.notes}>

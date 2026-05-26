@@ -5,33 +5,34 @@ import { theme } from './theme.js'
 export const ExperienceSchema = z.object({
   company: z.string().describe('Company or organization name'),
   role: z.string().describe('Job title'),
-  startDate: z.string().describe('Start date (e.g. Jan 2020)'),
+  startDate: z.string().optional().describe('Start date (e.g. Jan 2020)'),
   endDate: z.coerce.string().nullable().optional().describe('End date (e.g. Dec 2023, or "Present")'),
   bulletPoints: z
     .array(z.string())
+    .optional()
     .describe('Key accomplishments and responsibilities'),
 })
 
 export const EducationSchema = z.object({
   institution: z.string().describe('School or university name'),
-  degree: z.string().describe('Degree type (e.g. B.S., M.S.)'),
-  field: z.string().describe('Field of study'),
-  year: z.coerce.string().describe('Graduation year'),
+  degree: z.string().optional().describe('Degree type (e.g. B.S., M.S.)'),
+  field: z.string().optional().describe('Field of study'),
+  year: z.coerce.string().optional().describe('Graduation year'),
 })
 
 export const ResumeDataSchema = z.object({
   name: z.string(),
-  title: z.string().describe('Professional headline'),
+  title: z.string().optional().describe('Professional headline'),
   contact: z.object({
-    email: z.string().email(),
-    phone: z.string(),
+    email: z.string().optional(),
+    phone: z.string().optional(),
     linkedin: z.string().optional(),
     website: z.string().optional(),
-  }),
-  summary: z.string().describe('Professional summary paragraph'),
-  experience: z.array(ExperienceSchema),
-  education: z.array(EducationSchema),
-  skills: z.array(z.string()),
+  }).optional(),
+  summary: z.string().optional().describe('Professional summary paragraph'),
+  experience: z.array(ExperienceSchema).optional(),
+  education: z.array(EducationSchema).optional(),
+  skills: z.array(z.string()).optional(),
   certifications: z
     .array(
       z.object({
@@ -169,67 +170,88 @@ const s = {
 }
 
 export function ResumeTemplate({ data }: { data: ResumeData }) {
+  const contact = data.contact
+  const experience = data.experience || []
+  const education = data.education || []
+  const skills = data.skills || []
+
   return (
     <div style={s.page}>
       <div style={s.header}>
         <h1 style={s.name}>{data.name}</h1>
-        <div style={s.titleLine}>{data.title}</div>
-        <div style={s.contactRow}>
-          <span>{data.contact.email}</span>
-          <span>{data.contact.phone}</span>
-          {data.contact.linkedin && <span>{data.contact.linkedin}</span>}
-          {data.contact.website && <span>{data.contact.website}</span>}
+        {data.title && <div style={s.titleLine}>{data.title}</div>}
+        {contact && (
+          <div style={s.contactRow}>
+            {contact.email && <span>{contact.email}</span>}
+            {contact.phone && <span>{contact.phone}</span>}
+            {contact.linkedin && <span>{contact.linkedin}</span>}
+            {contact.website && <span>{contact.website}</span>}
+          </div>
+        )}
+      </div>
+
+      {data.summary && (
+        <div style={s.section}>
+          <div style={s.sectionTitle}>Professional Summary</div>
+          <div style={s.summary}>{data.summary}</div>
         </div>
-      </div>
+      )}
 
-      <div style={s.section}>
-        <div style={s.sectionTitle}>Professional Summary</div>
-        <div style={s.summary}>{data.summary}</div>
-      </div>
-
-      <div style={s.section}>
-        <div style={s.sectionTitle}>Experience</div>
-        {data.experience.map((exp, i) => (
-          <div key={i} style={s.expBlock}>
-            <div style={s.expHeader}>
-              <span style={s.expRole}>
-                <span style={s.expRole}>{exp.role}</span>
-                <span style={s.expCompany}> at {exp.company}</span>
-              </span>
-              <span style={s.expDates}>
-                {exp.startDate} — {exp.endDate || 'Present'}
-              </span>
+      {experience.length > 0 && (
+        <div style={s.section}>
+          <div style={s.sectionTitle}>Experience</div>
+          {experience.map((exp, i) => (
+            <div key={i} style={s.expBlock}>
+              <div style={s.expHeader}>
+                <span style={s.expRole}>
+                  <span>{exp.role}</span>
+                  {exp.company && <span style={s.expCompany}> at {exp.company}</span>}
+                </span>
+                {exp.startDate && (
+                  <span style={s.expDates}>
+                    {exp.startDate} — {exp.endDate || 'Present'}
+                  </span>
+                )}
+              </div>
+              {exp.bulletPoints && exp.bulletPoints.length > 0 && (
+                <ul style={s.bulletList}>
+                  {exp.bulletPoints.map((bp, j) => (
+                    <li key={j} style={s.bullet}>{bp}</li>
+                  ))}
+                </ul>
+              )}
             </div>
-            <ul style={s.bulletList}>
-              {exp.bulletPoints.map((bp, j) => (
-                <li key={j} style={s.bullet}>{bp}</li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
-
-      <div style={s.section}>
-        <div style={s.sectionTitle}>Education</div>
-        {data.education.map((edu, i) => (
-          <div key={i} style={s.eduRow}>
-            <span>
-              <span style={s.eduSchool}>{edu.institution}</span>
-              <span style={s.eduDetail}> — {edu.degree} in {edu.field}</span>
-            </span>
-            <span style={s.eduYear}>{edu.year}</span>
-          </div>
-        ))}
-      </div>
-
-      <div style={s.section}>
-        <div style={s.sectionTitle}>Skills</div>
-        <div style={s.skillsWrap}>
-          {data.skills.map((skill, i) => (
-            <span key={i} style={s.skillPill}>{skill}</span>
           ))}
         </div>
-      </div>
+      )}
+
+      {education.length > 0 && (
+        <div style={s.section}>
+          <div style={s.sectionTitle}>Education</div>
+          {education.map((edu, i) => (
+            <div key={i} style={s.eduRow}>
+              <span>
+                <span style={s.eduSchool}>{edu.institution}</span>
+                {edu.degree && (
+                  <span style={s.eduDetail}> — {edu.degree}{edu.field ? ` in ${edu.field}` : ''}</span>
+                )}
+              </span>
+              {edu.year && <span style={s.eduYear}>{edu.year}</span>}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {skills.length > 0 && (
+        <div style={s.section}>
+          <div style={s.sectionTitle}>Skills</div>
+          <div style={s.skillsWrap}>
+            {skills.map((skill, i) => (
+              <span key={i} style={s.skillPill}>{skill}</span>
+            ))}
+          </div>
+        </div>
+      )}
 
       {data.certifications && data.certifications.length > 0 && (
         <div style={s.section}>

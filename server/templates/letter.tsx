@@ -3,15 +3,15 @@ import { z } from 'zod'
 import { theme } from './theme.js'
 
 export const LetterDataSchema = z.object({
-  date: z.coerce.string().describe('Date of the letter'),
+  date: z.coerce.string().optional().describe('Date of the letter'),
   recipient: z.object({
     name: z.string().describe('Recipient full name'),
-    address: z.string().describe('Recipient mailing address'),
+    address: z.string().optional().describe('Recipient mailing address'),
   }),
-  subject: z.string().describe('Letter subject line (Re:)'),
-  body: z.string().describe('Letter body. Use double newlines for paragraphs.'),
-  closing: z.string().describe('Valediction / closing (e.g. Sincerely)'),
-  signature: z.string().describe('Sender signature name'),
+  subject: z.string().optional().describe('Letter subject line (Re:)'),
+  body: z.string().optional().describe('Letter body. Use double newlines for paragraphs.'),
+  closing: z.string().optional().describe('Valediction / closing (e.g. Sincerely)'),
+  signature: z.string().optional().describe('Sender signature name'),
   sender: z
     .object({
       name: z.string().optional(),
@@ -82,7 +82,8 @@ const s = {
 }
 
 export function LetterTemplate({ data }: { data: LetterData }) {
-  const paragraphs = data.body.split(/\n\n+/)
+  const body = data.body || ''
+  const paragraphs = body.split(/\n\n+/).filter(Boolean)
 
   return (
     <div style={s.page}>
@@ -93,25 +94,29 @@ export function LetterTemplate({ data }: { data: LetterData }) {
         </div>
       )}
 
-      <div style={s.date}>{data.date}</div>
+      {data.date && <div style={s.date}>{data.date}</div>}
 
       <div style={s.recipientBlock}>
         <div>{data.recipient.name}</div>
-        <div>{data.recipient.address}</div>
+        {data.recipient.address && <div>{data.recipient.address}</div>}
       </div>
 
-      <div style={s.subjectLine}>Re: {data.subject}</div>
+      {data.subject && <div style={s.subjectLine}>Re: {data.subject}</div>}
 
-      <div style={s.body}>
-        {paragraphs.map((p, i) => (
-          <p key={i} style={s.paragraph}>{p}</p>
-        ))}
-      </div>
+      {paragraphs.length > 0 && (
+        <div style={s.body}>
+          {paragraphs.map((p, i) => (
+            <p key={i} style={s.paragraph}>{p}</p>
+          ))}
+        </div>
+      )}
 
-      <div style={s.closing}>
-        <div>{data.closing},</div>
-        <div style={s.signatureName}>{data.signature}</div>
-      </div>
+      {data.closing && (
+        <div style={s.closing}>
+          <div>{data.closing},</div>
+          {data.signature && <div style={s.signatureName}>{data.signature}</div>}
+        </div>
+      )}
     </div>
   )
 }
