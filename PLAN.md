@@ -17,15 +17,15 @@ User (chat / file upload)
 └──────────────────┬──────────────────────┘
                    │ POST /api/chat
                    ▼
-┌─────────────────────────────────────────┐
+ ┌─────────────────────────────────────────┐
 │  Node.js Backend (Express + Vercel AI)  │
 │                                         │
-│  Agent orchestrates via tools:          │
-│   1. select_template(user_intent)       │
-│   2. fill_template(template, content)   │
-│   3. render_pdf(template_id, data)      │
-│      → React → static HTML → Playwright │
-│        → PDF → return blob URL          │
+│  Agent tool:                            │
+│   render_pdf(template, data)            │
+│     → registry lookup + Zod validate    │
+│     → React renderToStaticMarkup        │
+│     → Playwright HTML → PDF             │
+│     → store + return pdfId              │
 └─────────────────────────────────────────┘
 ```
 
@@ -68,8 +68,7 @@ pdfgen/
 │   ├── pdf/
 │   │   └── generator.ts           # Playwright HTML → PDF
 │   └── lib/
-│       ├── llm.ts                 # AI SDK model config (OpenAI / Ollama)
-│       └── file-parser.ts         # Parse uploaded .txt/.md
+│       └── llm.ts                 # AI SDK model config (OpenAI / Ollama)
 ├── src/                           # Vite React frontend
 │   ├── main.tsx
 │   ├── App.tsx
@@ -107,28 +106,17 @@ pdfgen/
 - PDF preview (iframe)
 - Controls (download, regenerate)
 
-### Phase 3 — LLM Agent System
-- System prompt instructing agent workflow
-- Three tool definitions (select_template, fill_template, render_pdf)
-- Template selection logic
-- Content → template field mapping via LLM
-- Render + store PDF tool
+### ✅ Phase 3 — LLM Agent System
+- Typed template registry with Zod schemas per template
+- Invoice, resume, letter React components with inline styles
+- Dynamic system prompt built from registry
+- Single `render_pdf` tool: registry lookup → Zod validation → React renderToStaticMarkup → Playwright PDF → store + return pdfId
 
-### Phase 4 — Template System
-- Template registry (id → schema + component)
-- Invoice template (React + Tailwind)
-- Resume template (React + Tailwind)
-- Letter template (React + Tailwind)
-- Server-side HTML rendering with ReactDOMServer
+### Phase 4 — Template Styling Polish
+- Refine template inline styles or integrate Tailwind via a build step
+- Responsive/professional visual polish
 
-### Phase 5 — PDF Generation
-- Playwright integration (launch, setContent, page.pdf)
-- In-memory + temp file storage
-- Periodic cleanup
-
-### Phase 6 — Integration & Polish
-- Wire frontend preview to backend
-- Download with Content-Disposition
-- Error states and retry
-- Loading UX (streaming text, spinner)
-- Dev scripts (concurrently)
+### Phase 5 — PDF Optimization
+- Playwright headers, footers, and page numbers
+- Custom fonts and watermarks
+- Periodic in-memory PDF cleanup
