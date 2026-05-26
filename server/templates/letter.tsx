@@ -1,5 +1,6 @@
 import React from 'react'
 import { z } from 'zod'
+import { theme } from './theme.js'
 
 export const LetterDataSchema = z.object({
   date: z.coerce.string().describe('Date of the letter'),
@@ -21,54 +22,62 @@ export const LetterDataSchema = z.object({
 
 export type LetterData = z.infer<typeof LetterDataSchema>
 
-const styles = {
-  container: {
-    fontFamily: "'Georgia', 'Times New Roman', serif",
+const s = {
+  page: {
+    fontFamily: theme.fonts.serif,
     maxWidth: '680px',
     margin: '0 auto',
     padding: '60px 50px',
-    color: '#1a1a1a',
-    fontSize: '12px',
-    lineHeight: '1.7',
+    color: theme.colors.text,
+    fontSize: theme.fontSize.md,
+    lineHeight: '1.8',
   },
   senderBlock: {
-    marginBottom: '20px',
-    fontSize: '11px',
-    color: '#4a4a4a',
+    marginBottom: theme.spacing.xl,
+    fontSize: theme.fontSize.base,
+    color: theme.colors.textSecondary,
   },
   date: {
-    marginBottom: '25px',
-    fontSize: '12px',
+    marginBottom: theme.spacing.section,
+    fontSize: theme.fontSize.md,
+    color: theme.colors.text,
   },
   recipientBlock: {
-    marginBottom: '25px',
-    fontSize: '12px',
+    marginBottom: theme.spacing.section,
+    fontSize: theme.fontSize.md,
+    lineHeight: '1.6',
   },
   subjectLine: {
     fontWeight: '700',
-    fontSize: '13px',
-    marginBottom: '25px',
-    paddingBottom: '8px',
-    borderBottom: '1px solid #d0d0d0',
+    fontSize: theme.fontSize.lg,
+    color: theme.colors.primary,
+    marginBottom: theme.spacing.section,
+    paddingBottom: theme.spacing.md,
+    borderBottom: `${theme.borderWidth.sm} solid ${theme.colors.border}`,
   },
   body: {
-    marginBottom: '30px',
-    whiteSpace: 'pre-wrap' as const,
-    fontSize: '12px',
+    marginBottom: theme.spacing.section,
+    fontSize: theme.fontSize.md,
     lineHeight: '1.8',
+    color: theme.colors.text,
+  },
+  paragraph: {
+    margin: '0 0 12px 0',
+    textIndent: '0',
   },
   closing: {
-    marginBottom: '30px',
-    fontSize: '12px',
-  },
-  signatureBlock: {
-    marginTop: '8px',
-    fontSize: '12px',
+    marginBottom: theme.spacing.section,
+    fontSize: theme.fontSize.md,
+    lineHeight: '2',
+    color: theme.colors.text,
   },
   signatureName: {
     fontWeight: '700',
-    fontSize: '13px',
-    marginTop: '30px',
+    fontSize: theme.fontSize.lg,
+    color: theme.colors.text,
+    marginTop: theme.spacing.xl,
+    paddingTop: theme.spacing.xl,
+    borderTop: `${theme.borderWidth.sm} solid ${theme.colors.border}`,
   },
 }
 
@@ -76,34 +85,32 @@ export function LetterTemplate({ data }: { data: LetterData }) {
   const paragraphs = data.body.split(/\n\n+/)
 
   return (
-    <div style={styles.container}>
+    <div style={s.page}>
       {data.sender?.name && (
-        <div style={styles.senderBlock}>
-          {data.sender.name && <div>{data.sender.name}</div>}
+        <div style={s.senderBlock}>
+          <div>{data.sender.name}</div>
           {data.sender.address && <div>{data.sender.address}</div>}
         </div>
       )}
 
-      <div style={styles.date}>{data.date}</div>
+      <div style={s.date}>{data.date}</div>
 
-      <div style={styles.recipientBlock}>
+      <div style={s.recipientBlock}>
         <div>{data.recipient.name}</div>
         <div>{data.recipient.address}</div>
       </div>
 
-      <div style={styles.subjectLine}>Re: {data.subject}</div>
+      <div style={s.subjectLine}>Re: {data.subject}</div>
 
-      <div style={styles.body}>
+      <div style={s.body}>
         {paragraphs.map((p, i) => (
-          <p key={i} style={{ margin: '0 0 10px 0' }}>
-            {p}
-          </p>
+          <p key={i} style={s.paragraph}>{p}</p>
         ))}
       </div>
 
-      <div style={styles.closing}>
+      <div style={s.closing}>
         <div>{data.closing},</div>
-        <div style={styles.signatureName}>{data.signature}</div>
+        <div style={s.signatureName}>{data.signature}</div>
       </div>
     </div>
   )
