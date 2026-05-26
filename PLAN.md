@@ -112,11 +112,13 @@ pdfgen/
 - Dynamic system prompt built from registry
 - Single `render_pdf` tool: registry lookup → Zod validation → React renderToStaticMarkup → Playwright PDF → store + return pdfId
 
-### Phase 4 — Template Styling Polish
-- Refine template inline styles or integrate Tailwind via a build step
-- Responsive/professional visual polish
+### ✅ Phase 4 — Template Styling Polish
+- Shared design token theme (colors, fonts, spacing, print utilities)
+- Redesigned invoice, resume, and letter templates with consistent styling
+- Professional typography, visual hierarchy, and layout
 
-### Phase 5 — PDF Optimization
-- Playwright headers, footers, and page numbers
-- Custom fonts and watermarks
-- Periodic in-memory PDF cleanup
+### ✅ Phase 5 — PDF Optimization
+- Playwright `displayHeaderFooter` with page numbers and date
+- Google Fonts (Inter) embedded in generated HTML
+- Optional watermark overlay (LLM-controlled via `watermark` field on `render_pdf`)
+- Periodic cleanup of PDFs older than 1 hour

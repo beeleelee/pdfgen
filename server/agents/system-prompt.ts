@@ -25,7 +25,9 @@ Use common sense to infer reasonable defaults for missing optional fields when t
 - Use "Present" for current roles when end dates are not specified.
 - Convert numbers like 2018 to strings like "2018" where string format is expected.
 
-Only ask clarifying questions when the missing information is truly ambiguous — not when it can be reasonably inferred from the context. If the user provides enough detail to generate the document, call render_pdf directly.`
+Only ask clarifying questions when the missing information is truly ambiguous — not when it can be reasonably inferred from the context. If the user provides enough detail to generate the document, call render_pdf directly.
+
+The render_pdf tool also accepts an optional "watermark" field. If the user requests labels like "DRAFT", "CONFIDENTIAL", "SAMPLE", or "FOR REVIEW", pass it as the watermark parameter.`
 }
 
 export const SYSTEM_PROMPT = buildPrompt()

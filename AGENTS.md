@@ -56,8 +56,9 @@ Set `LLM_PROVIDER=openai` (default, requires `OPENAI_API_KEY`) or `LLM_PROVIDER=
 
 ## Development state
 
-- **Done**: Project scaffold (Phase 0), backend server (Phase 1), frontend shell (Phase 2), LLM agent system (Phase 3).
-- **Phase 3 details**: Typed template registry with Zod schemas; three real template components (invoice, resume, letter) with inline styles; `render_pdf` tool validates data, renders React via `renderToStaticMarkup`, generates PDF via Playwright, and stores with a UUID key; system prompt built dynamically from registry.
-- **Next**: Template styling polish with Tailwind (Phase 4), Playwright PDF optimization — headers, footers, custom fonts, watermarks (Phase 5).
-- **Incomplete**: `multer` installed but unused. No tests exist.
+- **Done**: Phase 0 (scaffold), Phase 1 (backend), Phase 2 (frontend), Phase 3 (LLM agent), Phase 4 (styling polish), Phase 5 (PDF optimization).
+- **Phase 4 details**: Shared design token theme; redesigned invoice, resume, and letter templates with professional layout, consistent colors, and improved typography.
+- **Phase 5 details**: Playwright `displayHeaderFooter` with page numbers and date; Google Fonts (Inter) embedded; optional watermark overlay (LLM-controlled via `watermark` field on `render_pdf`); periodic cleanup of PDFs older than 1 hour.
+- **Next**: Testing, bug fixes, removing unused deps (`multer`), adding test prompts.
+- **Incomplete**: No tests exist.
 - **Env**: Copy `.env.example` to `.env` and set `OPENAI_API_KEY` (or `LLM_PROVIDER=ollama`). Run `npm run playwright:install` before using PDF generation if Chromium is not already installed.
