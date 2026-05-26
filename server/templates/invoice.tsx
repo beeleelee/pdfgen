@@ -20,9 +20,9 @@ export const InvoiceDataSchema = z.object({
     .array(
       z.object({
         description: z.string(),
-        quantity: z.coerce.number().positive().optional().default(1),
-        rate: z.coerce.number().positive().optional().default(0),
-        amount: z.coerce.number().positive().optional().default(0),
+        quantity: z.coerce.number().nonnegative().optional(),
+        rate: z.coerce.number().nonnegative().optional(),
+        amount: z.coerce.number().nonnegative().optional(),
       })
     ),
   subtotal: z.coerce.number().nonnegative().optional(),
@@ -175,8 +175,16 @@ function fmt(n: number): string {
   return `$${n.toFixed(2)}`
 }
 
+function num(n: number | undefined | null, fallback = 0): number {
+  return (n != null && !isNaN(n)) ? n : fallback
+}
+
 function computeSubtotal(items: InvoiceData['lineItems']): number {
-  return items.reduce((sum, item) => sum + (item.amount || item.quantity * item.rate || 0), 0)
+  return items.reduce((sum, item) => {
+    const amount = num(item.amount)
+    if (amount > 0) return sum + amount
+    return sum + num(item.quantity) * num(item.rate)
+  }, 0)
 }
 
 function formatDate(d: string): string {
@@ -231,9 +239,9 @@ export function InvoiceTemplate({ data }: { data: InvoiceData }) {
               {items.map((item, i) => (
                 <tr key={i}>
                   <td style={s.td}>{item.description}</td>
-                  <td style={s.tdRight}>{item.quantity}</td>
-                  <td style={s.tdRight}>{fmt(item.rate)}</td>
-                  <td style={s.tdRight}>{fmt(item.amount || item.quantity * item.rate)}</td>
+                  <td style={s.tdRight}>{num(item.quantity, 1)}</td>
+                  <td style={s.tdRight}>{fmt(num(item.rate))}</td>
+                  <td style={s.tdRight}>{fmt(num(item.amount) || num(item.quantity) * num(item.rate))}</td>
                 </tr>
               ))}
             </tbody>
