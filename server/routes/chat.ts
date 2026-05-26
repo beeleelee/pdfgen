@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { streamText } from 'ai'
+import { streamText, convertToModelMessages } from 'ai'
 import { getModel } from '../lib/llm.js'
 import { SYSTEM_PROMPT } from '../agents/system-prompt.js'
 import { tools } from '../agents/tools.js'
@@ -11,7 +11,7 @@ router.post('/', async (req, res) => {
 
   const result = streamText({
     model: getModel(),
-    messages,
+    messages: await convertToModelMessages(messages),
     system: SYSTEM_PROMPT,
     tools,
   })

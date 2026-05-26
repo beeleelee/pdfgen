@@ -6,11 +6,13 @@ export function getModel(): LanguageModel {
   const provider = process.env.LLM_PROVIDER || 'openai'
 
   if (provider === 'ollama') {
-    return ollama('llama3.2') as unknown as LanguageModel
+    const model = process.env.OLLAMA_MODEL || 'llama3.2'
+    return ollama(model) as unknown as LanguageModel
   }
 
   const openai = createOpenAI({
     apiKey: process.env.OPENAI_API_KEY,
   })
-  return openai('gpt-4o') as unknown as LanguageModel
+  const model = process.env.OPENAI_MODEL || 'gpt-4o'
+  return openai(model) as unknown as LanguageModel
 }
