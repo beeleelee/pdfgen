@@ -8,6 +8,40 @@ import { generatePdf, storePdf, startCleanup } from '../pdf/generator.js'
 
 startCleanup()
 
+function preprocessData(data: Record<string, unknown>): Record<string, unknown> {
+  const result = { ...data }
+
+  if (typeof result.sender === 'string') {
+    result.sender = { name: result.sender }
+  }
+  if (typeof result.recipient === 'string') {
+    result.recipient = { name: result.recipient }
+  }
+  if (typeof result.contact === 'string') {
+    result.contact = { email: result.contact }
+  }
+  if (typeof result.lineItems === 'string') {
+    result.lineItems = [{ description: result.lineItems }]
+  }
+  if (typeof result.experience === 'string') {
+    result.experience = [{ company: result.experience }]
+  }
+  if (typeof result.education === 'string') {
+    result.education = [{ institution: result.education }]
+  }
+  if (typeof result.skills === 'string') {
+    result.skills = [result.skills]
+  }
+  if (typeof result.certifications === 'string') {
+    result.certifications = [{ name: result.certifications }]
+  }
+  if (typeof result.signature === 'string' && !result.sender) {
+    result.sender = { name: result.signature }
+  }
+
+  return result
+}
+
 function wrapHtml(content: string, watermark?: string): string {
   const watermarkCss = watermark
     ? `.wm-overlay {
@@ -80,7 +114,8 @@ export const tools = {
         return { error: `Unknown template: ${template}` }
       }
 
-      const parsed = entry.schema.safeParse(data)
+      const augmented = preprocessData(data)
+      const parsed = entry.schema.safeParse(augmented)
       if (!parsed.success) {
         console.error(
           `[render_pdf] Validation error for ${template}:`,
