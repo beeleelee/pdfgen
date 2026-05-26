@@ -2,7 +2,7 @@ import React from 'react'
 import { z } from 'zod'
 
 export const LetterDataSchema = z.object({
-  date: z.string().describe('Date of the letter'),
+  date: z.coerce.string().describe('Date of the letter'),
   recipient: z.object({
     name: z.string().describe('Recipient full name'),
     address: z.string().describe('Recipient mailing address'),

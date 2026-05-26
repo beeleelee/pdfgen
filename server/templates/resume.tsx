@@ -5,7 +5,7 @@ export const ExperienceSchema = z.object({
   company: z.string().describe('Company or organization name'),
   role: z.string().describe('Job title'),
   startDate: z.string().describe('Start date (e.g. Jan 2020)'),
-  endDate: z.string().describe('End date (e.g. Dec 2023, or "Present")'),
+  endDate: z.coerce.string().nullable().optional().describe('End date (e.g. Dec 2023, or "Present")'),
   bulletPoints: z
     .array(z.string())
     .describe('Key accomplishments and responsibilities'),
@@ -15,7 +15,7 @@ export const EducationSchema = z.object({
   institution: z.string().describe('School or university name'),
   degree: z.string().describe('Degree type (e.g. B.S., M.S.)'),
   field: z.string().describe('Field of study'),
-  year: z.string().describe('Graduation year'),
+  year: z.coerce.string().describe('Graduation year'),
 })
 
 export const ResumeDataSchema = z.object({
@@ -35,8 +35,8 @@ export const ResumeDataSchema = z.object({
     .array(
       z.object({
         name: z.string(),
-        issuer: z.string(),
-        year: z.string(),
+        issuer: z.string().optional(),
+        year: z.coerce.string().optional(),
       })
     )
     .optional(),

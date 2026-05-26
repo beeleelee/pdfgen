@@ -36,14 +36,14 @@ templateRegistry.set('resume', {
   schema: ResumeDataSchema,
   description: 'Resume/CV template for creating professional resumes with experience, education, and skills',
   dataDescription: `Fields:
-  - name (string)
+  - name (string, REQUIRED): Full name of the person (extract from user's message)
   - title (string): Professional headline
   - contact: { email, phone, linkedin?, website? }
   - summary (string): Professional summary paragraph
-  - experience: [{ company, role, startDate, endDate, bulletPoints: [string] }]
-  - education: [{ institution, degree, field, year }]
+  - experience: [{ company, role, startDate, endDate (optional, use "Present" for current), bulletPoints: [string] }]
+  - education: [{ institution, degree, field, year (number or string) }]
   - skills: [string]
-  - certifications?: [{ name, issuer, year }]`,
+  - certifications?: [{ name, issuer?, year? }]`,
 })
 
 templateRegistry.set('letter', {

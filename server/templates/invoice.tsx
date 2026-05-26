@@ -3,8 +3,8 @@ import { z } from 'zod'
 
 export const InvoiceDataSchema = z.object({
   invoiceNumber: z.string().describe('Unique invoice identifier'),
-  issueDate: z.string().describe('Date of issue (e.g. 2024-01-15)'),
-  dueDate: z.string().describe('Payment due date (e.g. 2024-02-15)'),
+  issueDate: z.coerce.string().describe('Date of issue (e.g. 2024-01-15)'),
+  dueDate: z.coerce.string().describe('Payment due date (e.g. 2024-02-15)'),
   sender: z.object({
     name: z.string(),
     address: z.string(),
@@ -19,16 +19,16 @@ export const InvoiceDataSchema = z.object({
     .array(
       z.object({
         description: z.string(),
-        quantity: z.number().positive(),
-        rate: z.number().positive(),
-        amount: z.number().positive(),
+        quantity: z.coerce.number().positive(),
+        rate: z.coerce.number().positive(),
+        amount: z.coerce.number().positive(),
       })
     )
     .min(1),
-  subtotal: z.number().nonnegative(),
-  tax: z.number().nonnegative().optional(),
-  taxRate: z.number().nonnegative().optional(),
-  total: z.number().nonnegative(),
+  subtotal: z.coerce.number().nonnegative(),
+  tax: z.coerce.number().nonnegative().optional(),
+  taxRate: z.coerce.number().nonnegative().optional(),
+  total: z.coerce.number().nonnegative(),
   notes: z.string().optional(),
 })
 
