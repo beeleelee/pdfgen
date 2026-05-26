@@ -25,10 +25,10 @@ server/            # Express (tsconfig.server.json)
     chat.ts         POST → streamText → pipeUIMessageStreamToResponse(res)
     pdf.ts          GET :id → pdfStore Map lookup
   agents/
-    tools.ts        render_pdf tool stub (placeholder)
+    tools.ts        render_pdf tool (registry lookup, Zod validation, React SSR, Playwright PDF)
     system-prompt.ts
-  templates/        Stubs only — not yet implemented
-  pdf/generator.ts  pdfStore Map<string, Buffer> + storePdf()
+  templates/        React components + Zod schemas + typed registry
+  pdf/generator.ts  pdfStore + storePdf() + generatePdf() (Playwright)
   lib/
     llm.ts          getModel(): switches on LLM_PROVIDER env
 ```
@@ -52,11 +52,12 @@ Set `LLM_PROVIDER=openai` (default, requires `OPENAI_API_KEY`) or `LLM_PROVIDER=
 | `npm run typecheck` | tsc for both configs |
 | `npm run build` | Vite production build |
 | `npm start` | Express serves build (NODE_ENV=production) |
-| `npm run playwright:install` | Download Chromium for PDF gen (needed for Phase 5) |
+| `npm run playwright:install` | Download Chromium for PDF gen (needed for Phase 3) |
 
 ## Development state
 
-- **Done**: Project scaffold (Phase 0), backend server (Phase 1), frontend shell (Phase 2).
-- **Next**: LLM agent system with real template selection/filling (Phase 3), template React components (Phase 4), Playwright PDF gen (Phase 5).
-- **Incomplete**: `render_pdf` tool is a stub returning `{ pdfId: 'placeholder' }`. All template `.tsx` files in `server/templates/` are stubs. `uuid`, `multer`, `react-dom/server` are installed but unused. No tests exist.
-- **Env**: Copy `.env.example` to `.env` and set `OPENAI_API_KEY` (or `LLM_PROVIDER=ollama`).
+- **Done**: Project scaffold (Phase 0), backend server (Phase 1), frontend shell (Phase 2), LLM agent system (Phase 3).
+- **Phase 3 details**: Typed template registry with Zod schemas; three real template components (invoice, resume, letter) with inline styles; `render_pdf` tool validates data, renders React via `renderToStaticMarkup`, generates PDF via Playwright, and stores with a UUID key; system prompt built dynamically from registry.
+- **Next**: Template styling polish with Tailwind (Phase 4), Playwright PDF optimization — headers, footers, custom fonts, watermarks (Phase 5).
+- **Incomplete**: `multer` installed but unused. No tests exist.
+- **Env**: Copy `.env.example` to `.env` and set `OPENAI_API_KEY` (or `LLM_PROVIDER=ollama`). Run `npm run playwright:install` before using PDF generation if Chromium is not already installed.
