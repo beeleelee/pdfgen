@@ -1,10 +1,23 @@
-function App() {
+import { useState } from 'react'
+import { Chat } from './components/Chat'
+import { FileUpload } from './components/FileUpload'
+import { PdfPreview } from './components/PdfPreview'
+import { Controls } from './components/Controls'
+
+export default function App() {
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null)
+  const [fileContent, setFileContent] = useState<string | null>(null)
+
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
-      <h1 className="text-2xl font-bold mb-4">pdfgen</h1>
-      <p className="text-gray-600">Generate PDFs from natural language.</p>
+    <div className="flex h-screen bg-gray-50">
+      <div className="w-1/2 flex flex-col border-r border-gray-200">
+        <FileUpload onFileContent={setFileContent} />
+        <Chat onPdfUrl={setPdfUrl} fileContent={fileContent} />
+      </div>
+      <div className="w-1/2 flex flex-col">
+        <Controls pdfUrl={pdfUrl} onClear={() => setPdfUrl(null)} />
+        <PdfPreview pdfUrl={pdfUrl} />
+      </div>
     </div>
   )
 }
-
-export default App
