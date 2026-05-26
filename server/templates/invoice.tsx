@@ -1,5 +1,6 @@
 import React from 'react'
 import { z } from 'zod'
+import { theme } from './theme.js'
 
 export const InvoiceDataSchema = z.object({
   invoiceNumber: z.string().describe('Unique invoice identifier'),
@@ -34,89 +35,101 @@ export const InvoiceDataSchema = z.object({
 
 export type InvoiceData = z.infer<typeof InvoiceDataSchema>
 
-const styles = {
-  container: {
-    fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
+const s = {
+  page: {
+    fontFamily: theme.fonts.sans,
     maxWidth: '800px',
     margin: '0 auto',
-    padding: '40px',
-    color: '#333',
-    fontSize: '12px',
-    lineHeight: '1.5',
+    padding: '48px 40px',
+    color: theme.colors.text,
+    fontSize: theme.fontSize.base,
+    lineHeight: '1.6',
   },
   header: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: '30px',
-    borderBottom: '3px solid #2563eb',
-    paddingBottom: '20px',
+    marginBottom: theme.spacing.section,
+    borderBottom: `${theme.borderWidth.lg} solid ${theme.colors.primary}`,
+    paddingBottom: theme.spacing.xl,
   },
   title: {
-    fontSize: '32px',
+    fontSize: theme.fontSize.title,
     fontWeight: '700',
-    color: '#2563eb',
+    color: theme.colors.primary,
     margin: '0',
     letterSpacing: '2px',
     textTransform: 'uppercase' as const,
   },
-  invoiceMeta: {
+  meta: {
     textAlign: 'right' as const,
-    fontSize: '11px',
-    color: '#666',
+    fontSize: theme.fontSize.sm,
+    color: theme.colors.textSecondary,
   },
   metaLabel: {
     fontWeight: '600',
-    color: '#333',
+    color: theme.colors.text,
   },
-  sectionTitle: {
-    fontSize: '13px',
+  sectionLabel: {
+    fontSize: theme.fontSize.lg,
     fontWeight: '700',
-    color: '#2563eb',
+    color: theme.colors.primary,
     textTransform: 'uppercase' as const,
     letterSpacing: '1px',
-    marginBottom: '8px',
+    marginBottom: theme.spacing.sm,
   },
-  addressBox: {
+  addressRow: {
     display: 'flex',
     justifyContent: 'space-between',
-    marginBottom: '25px',
+    marginBottom: theme.spacing.section,
   },
-  addressBlock: {
+  addressCol: {
     width: '45%',
-    fontSize: '11px',
+    fontSize: theme.fontSize.base,
+    color: theme.colors.textSecondary,
   },
-  name: {
+  addressName: {
     fontWeight: '700',
-    fontSize: '13px',
-    color: '#111',
-    marginBottom: '3px',
+    fontSize: theme.fontSize.lg,
+    color: theme.colors.text,
+    marginBottom: theme.spacing.xs,
   },
   table: {
     width: '100%',
     borderCollapse: 'collapse' as const,
-    marginBottom: '20px',
+    marginBottom: theme.spacing.xl,
   },
   th: {
-    backgroundColor: '#f8fafc',
-    padding: '10px 12px',
+    backgroundColor: theme.colors.bgMuted,
+    padding: '12px',
     textAlign: 'left' as const,
-    borderBottom: '2px solid #e2e8f0',
-    fontSize: '11px',
+    borderBottom: `${theme.borderWidth.md} solid ${theme.colors.borderDark}`,
+    fontSize: theme.fontSize.sm,
     fontWeight: '700',
-    color: '#475569',
+    color: theme.colors.textSecondary,
+    textTransform: 'uppercase' as const,
+    letterSpacing: '0.5px',
+  },
+  thRight: {
+    backgroundColor: theme.colors.bgMuted,
+    padding: '12px',
+    textAlign: 'right' as const,
+    borderBottom: `${theme.borderWidth.md} solid ${theme.colors.borderDark}`,
+    fontSize: theme.fontSize.sm,
+    fontWeight: '700',
+    color: theme.colors.textSecondary,
     textTransform: 'uppercase' as const,
     letterSpacing: '0.5px',
   },
   td: {
-    padding: '10px 12px',
-    borderBottom: '1px solid #e2e8f0',
-    fontSize: '11px',
+    padding: '12px',
+    borderBottom: `${theme.borderWidth.sm} solid ${theme.colors.border}`,
+    fontSize: theme.fontSize.base,
   },
-  amountRight: {
-    padding: '10px 12px',
-    borderBottom: '1px solid #e2e8f0',
-    fontSize: '11px',
+  tdRight: {
+    padding: '12px',
+    borderBottom: `${theme.borderWidth.sm} solid ${theme.colors.border}`,
+    fontSize: theme.fontSize.base,
     textAlign: 'right' as const,
     fontVariantNumeric: 'tabular-nums' as const,
   },
@@ -128,125 +141,109 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
     padding: '6px 0',
-    fontSize: '11px',
+    fontSize: theme.fontSize.base,
   },
-  totalLabel: {
-    fontWeight: '600',
-    color: '#475569',
-  },
-  totalAmount: {
+  totalValue: {
     textAlign: 'right' as const,
     fontVariantNumeric: 'tabular-nums' as const,
   },
   grandTotal: {
     display: 'flex',
     justifyContent: 'space-between',
-    padding: '10px 0',
-    borderTop: '2px solid #2563eb',
-    fontSize: '16px',
+    padding: '12px 0',
+    borderTop: `${theme.borderWidth.md} solid ${theme.colors.primary}`,
+    fontSize: theme.fontSize.xl,
     fontWeight: '700',
-    color: '#2563eb',
+    color: theme.colors.primary,
   },
   notes: {
-    marginTop: '30px',
-    padding: '15px',
-    backgroundColor: '#f8fafc',
-    borderRadius: '4px',
-    fontSize: '11px',
-    color: '#475569',
+    marginTop: theme.spacing.section,
+    padding: theme.spacing.lg,
+    backgroundColor: theme.colors.bgMuted,
+    borderRadius: theme.borderRadius.md,
+    fontSize: theme.fontSize.base,
+    color: theme.colors.textSecondary,
+    ...theme.print.keepTogether,
   },
   notesLabel: {
     fontWeight: '700',
-    color: '#333',
-    marginBottom: '5px',
+    color: theme.colors.text,
+    marginBottom: theme.spacing.xs,
   },
 }
 
-function formatCurrency(amount: number): string {
-  return `$${amount.toFixed(2)}`
+function fmt(n: number): string {
+  return `$${n.toFixed(2)}`
 }
 
 export function InvoiceTemplate({ data }: { data: InvoiceData }) {
   return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        <h1 style={styles.title}>Invoice</h1>
-        <div style={styles.invoiceMeta}>
-          <div>
-            <span style={styles.metaLabel}>Invoice #:</span>{' '}
-            {data.invoiceNumber}
-          </div>
-          <div>
-            <span style={styles.metaLabel}>Issue Date:</span> {data.issueDate}
-          </div>
-          <div>
-            <span style={styles.metaLabel}>Due Date:</span> {data.dueDate}
-          </div>
+    <div style={s.page}>
+      <div style={s.header}>
+        <h1 style={s.title}>Invoice</h1>
+        <div style={s.meta}>
+          <div><span style={s.metaLabel}>Invoice:</span> {data.invoiceNumber}</div>
+          <div><span style={s.metaLabel}>Issued:</span> {data.issueDate}</div>
+          <div><span style={s.metaLabel}>Due:</span> {data.dueDate}</div>
         </div>
       </div>
 
-      <div style={styles.addressBox}>
-        <div style={styles.addressBlock}>
-          <div style={styles.sectionTitle}>From</div>
-          <div style={styles.name}>{data.sender.name}</div>
+      <div style={s.addressRow}>
+        <div style={s.addressCol}>
+          <div style={s.sectionLabel}>From</div>
+          <div style={s.addressName}>{data.sender.name}</div>
           <div>{data.sender.address}</div>
           <div>{data.sender.email}</div>
         </div>
-        <div style={styles.addressBlock}>
-          <div style={styles.sectionTitle}>To</div>
-          <div style={styles.name}>{data.recipient.name}</div>
+        <div style={s.addressCol}>
+          <div style={s.sectionLabel}>To</div>
+          <div style={s.addressName}>{data.recipient.name}</div>
           <div>{data.recipient.address}</div>
           {data.recipient.email && <div>{data.recipient.email}</div>}
         </div>
       </div>
 
-      <table style={styles.table}>
+      <table style={s.table}>
         <thead>
           <tr>
-            <th style={styles.th}>Description</th>
-            <th style={{ ...styles.th, textAlign: 'right' }}>Qty</th>
-            <th style={{ ...styles.th, textAlign: 'right' }}>Rate</th>
-            <th style={{ ...styles.th, textAlign: 'right' }}>Amount</th>
+            <th style={s.th}>Description</th>
+            <th style={s.thRight}>Qty</th>
+            <th style={s.thRight}>Rate</th>
+            <th style={s.thRight}>Amount</th>
           </tr>
         </thead>
         <tbody>
           {data.lineItems.map((item, i) => (
             <tr key={i}>
-              <td style={styles.td}>{item.description}</td>
-              <td style={styles.amountRight}>{item.quantity}</td>
-              <td style={styles.amountRight}>{formatCurrency(item.rate)}</td>
-              <td style={styles.amountRight}>{formatCurrency(item.amount)}</td>
+              <td style={s.td}>{item.description}</td>
+              <td style={s.tdRight}>{item.quantity}</td>
+              <td style={s.tdRight}>{fmt(item.rate)}</td>
+              <td style={s.tdRight}>{fmt(item.amount)}</td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      <div style={styles.totals}>
-        <div style={styles.totalRow}>
-          <span style={styles.totalLabel}>Subtotal</span>
-          <span style={styles.totalAmount}>
-            {formatCurrency(data.subtotal)}
-          </span>
+      <div style={s.totals}>
+        <div style={s.totalRow}>
+          <span>Subtotal</span>
+          <span style={s.totalValue}>{fmt(data.subtotal)}</span>
         </div>
         {data.tax !== undefined && (
-          <div style={styles.totalRow}>
-            <span style={styles.totalLabel}>
-              Tax{data.taxRate ? ` (${data.taxRate}%)` : ''}
-            </span>
-            <span style={styles.totalAmount}>
-              {formatCurrency(data.tax)}
-            </span>
+          <div style={s.totalRow}>
+            <span>Tax{data.taxRate ? ` (${data.taxRate}%)` : ''}</span>
+            <span style={s.totalValue}>{fmt(data.tax)}</span>
           </div>
         )}
-        <div style={styles.grandTotal}>
-          <span>Total</span>
-          <span>{formatCurrency(data.total)}</span>
+        <div style={s.grandTotal}>
+          <span>Total Due</span>
+          <span>{fmt(data.total)}</span>
         </div>
       </div>
 
       {data.notes && (
-        <div style={styles.notes}>
-          <div style={styles.notesLabel}>Notes</div>
+        <div style={s.notes}>
+          <div style={s.notesLabel}>Notes</div>
           <div>{data.notes}</div>
         </div>
       )}
