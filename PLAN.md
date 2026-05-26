@@ -86,7 +86,7 @@ pdfgen/
 
 ## Phases
 
-### Phase 0 — Project Scaffolding
+### ✅ Phase 0 — Project Scaffolding
 - package.json with all deps and scripts
 - TypeScript configs (client + server)
 - Vite config with React plugin and API proxy
@@ -94,13 +94,13 @@ pdfgen/
 - .env.example
 - Directory structure + placeholder files
 
-### Phase 1 — Backend Server
+### ✅ Phase 1 — Backend Server
 - Express app with JSON parsing, CORS, static serving
 - POST /api/chat route (Vercel AI SDK streamText)
 - GET /api/pdf/:id route
 - LLM provider factory (OpenAI / Ollama)
 
-### Phase 2 — Frontend Shell
+### ✅ Phase 2 — Frontend Shell
 - Vite entry + root App component
 - Chat interface (useChat hook, messages, input)
 - File upload (drag-and-drop .txt/.md)
