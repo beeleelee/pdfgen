@@ -12,19 +12,23 @@ function wrapHtml(content: string, watermark?: string): string {
   const watermarkCss = watermark
     ? `.wm-overlay {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   pointer-events: none;
-  z-index: 9999;
-  font-size: 80px;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  font-size: 60px;
   font-weight: 700;
-  color: rgba(0,0,0,0.06);
+  color: rgba(30,64,175,0.10);
   transform: rotate(-30deg);
   font-family: 'Inter', 'Helvetica Neue', sans-serif;
   text-transform: uppercase;
-  letter-spacing: 8px;
+  letter-spacing: 12px;
 }\n`
     : ''
 
@@ -67,6 +71,9 @@ export const tools = {
       data: Record<string, unknown>
       watermark?: string
     }) => {
+      console.log(
+        `[render_pdf] execute called: template="${template}", watermark="${watermark || '(none)'}"`
+      )
       const entry = templateRegistry.get(template)
       if (!entry) {
         console.error(`[render_pdf] Unknown template: ${template}`)
