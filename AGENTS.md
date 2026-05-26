@@ -42,7 +42,7 @@ server/            # Express (tsconfig.server.json)
 
 ## LLM provider switching
 
-Set `LLM_PROVIDER=openai` (default, requires `OPENAI_API_KEY`) or `LLM_PROVIDER=ollama` (requires local Ollama at `OLLAMA_BASE_URL`). Override models via `OPENAI_MODEL` (default: `gpt-4o`) or `OLLAMA_MODEL` (default: `llama3.2`).
+Set `LLM_PROVIDER=openai` (default, requires `OPENAI_API_KEY`) or `LLM_PROVIDER=ollama` (requires local Ollama at `OLLAMA_BASE_URL`). Override models via `OPENAI_MODEL` (default: `gpt-4o`) or `OLLAMA_MODEL` (default: `llama3.1`). Recommended Ollama models with good tool calling support: `llama3.1`, `mistral`, `qwen2.5`, `phi-4`.
 
 ## Commands
 
