@@ -59,7 +59,7 @@ export const tools = {
         .string()
         .optional()
         .describe(
-          'Optional watermark text (e.g. DRAFT, CONFIDENTIAL, SAMPLE)'
+          'Watermark text displayed diagonally across every page. Use when the user mentions DRAFT, CONFIDENTIAL, SAMPLE, FOR REVIEW, or similar labels.'
         ),
     }),
     execute: async ({

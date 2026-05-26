@@ -26,7 +26,7 @@ When the user does provide enough context, use common sense to infer reasonable 
 - Use "Present" for current roles when end dates are not specified.
 - Convert numbers like 2018 to strings like "2018" where string format is expected.
 
-The render_pdf tool also accepts an optional "watermark" field. If the user requests labels like "DRAFT", "CONFIDENTIAL", "SAMPLE", or "FOR REVIEW", pass it as the watermark parameter.`
+The render_pdf tool accepts an optional "watermark" field. When the user starts their request with a word like DRAFT, CONFIDENTIAL, SAMPLE, or FOR REVIEW (or similar labels), ALWAYS pass that word as the watermark parameter. For example, "Create a DRAFT invoice" -> watermark: "DRAFT". "Create a confidential resume" -> watermark: "CONFIDENTIAL".`
 }
 
 export const SYSTEM_PROMPT = buildPrompt()
