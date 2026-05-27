@@ -13,6 +13,18 @@ npm run dev                  # Start dev server
 
 Open `http://localhost:5173` and describe the document you want in the chat.
 
+## How It Works
+
+1. **Chat** — User describes a document in natural language through the chat interface
+2. **LLM Agent** — AI SDK v6 `streamText()` sends conversation history + system prompt to the model. The system prompt instructs the LLM when to call the `render_pdf` tool and how to structure the data
+3. **Tool Call** — LLM responds with a tool invocation containing `template` (which template to use) and `data` (template-specific structured fields)
+4. **Validation** — Tool handler looks up the template in the registry, validates incoming data against its Zod schema
+5. **React SSR** — Template component is rendered to an HTML string via `ReactDOMServer.renderToStaticMarkup()`
+6. **Document Assembly** — Raw HTML is wrapped into a full document with `<!DOCTYPE>`, Google Fonts `<link>`, CSS reset, and page sizing
+7. **PDF Generation** — Playwright launches a headless Chromium browser, loads the HTML, and calls `page.pdf()` with configured margins, headers, and footers (page numbers, date)
+8. **Delivery** — PDF is stored in memory with a UUID; the client receives a URL pointing to `/api/pdf/:id`
+9. **Cleanup** — PDFs older than 1 hour are periodically purged from memory
+
 ## Architecture
 
 Single-package repo: Vite React frontend + Express backend, two separate TypeScript configs.
@@ -131,6 +143,7 @@ Tokens defined in `server/templates/theme.ts`:
 - **Client**: `useChat` from `@ai-sdk/react` (not `ai/react`). Uses `DefaultChatTransport`, `sendMessage({ text })`, `status`, `messages[N].parts`
 - **Tools**: Use `inputSchema` (not `parameters`). `tool()` is a pass-through identity function.
 - **Parts array**: Tool invocations appear as `{ type: 'tool-<name>', ... }` (e.g. `tool-render_pdf`)
+- **The `render_pdf` tool** is registered with an `inputSchema` accepting `template` (string enum: `resume`, `invoice`, `letter`) and `data` (record — validated against the template's Zod schema at runtime)
 
 ## Environment Variables
 

@@ -13,6 +13,18 @@ npm run dev                  # 启动开发服务器
 
 浏览器打开 `http://localhost:5173`，在聊天框中描述你想要的文档即可。
 
+## 技术原理
+
+1. **聊天** — 用户在聊天界面中用自然语言描述想要的文档
+2. **LLM Agent** — AI SDK v6 `streamText()` 将对话历史 + 系统提示词发送给模型，提示词指导 LLM 何时调用 `render_pdf` 工具以及如何组织数据
+3. **工具调用** — LLM 返回工具调用指令，包含 `template`（模板名称）和 `data`（模板对应的结构化字段）
+4. **校验** — 工具处理器在注册表中查找模板，使用 Zod schema 校验输入数据
+5. **React SSR** — 模板组件通过 `ReactDOMServer.renderToStaticMarkup()` 渲染为 HTML 字符串
+6. **文档组装** — HTML 被包装为完整文档，包含 `<!DOCTYPE>`、Google Fonts 字体链接、CSS 重置和页面尺寸设置
+7. **PDF 生成** — Playwright 启动无头 Chromium 浏览器，加载 HTML，调用 `page.pdf()` 生成带页眉/页脚（页码、日期）的 PDF
+8. **交付** — PDF 以 UUID 为键存储在内存中，客户端收到指向 `/api/pdf/:id` 的 URL
+9. **清理** — 超过 1 小时的 PDF 被定时从内存中清除
+
 ## 技术架构
 
 单仓模式：Vite React 前端 + Express 后端，两个独立的 TypeScript 配置。
@@ -131,6 +143,7 @@ OLLAMA_MODEL=llama3.1
 - **客户端**：`useChat` 从 `@ai-sdk/react` 导入（非 `ai/react`），使用 `DefaultChatTransport`、`sendMessage({ text })`、`status`、`messages[N].parts`
 - **工具定义**：使用 `inputSchema`（非 `parameters`），`tool()` 为透传标识函数
 - **消息 parts 数组**：工具调用类型为 `tool-<name>`（如 `tool-render_pdf`）
+- **`render_pdf` 工具**：注册时 `inputSchema` 接受 `template`（字符串枚举：`resume`、`invoice`、`letter`）和 `data`（记录对象，运行时由模板的 Zod schema 校验）
 
 ## 环境变量
 
