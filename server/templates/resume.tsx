@@ -69,11 +69,11 @@ export const ResumeDataSchema = z.object({
 export type ResumeData = z.infer<typeof ResumeDataSchema>
 
 const pillColors = [
-  { bg: '#eff6ff', text: '#1e40af' },
-  { bg: '#f0fdf4', text: '#15803d' },
-  { bg: '#fff7ed', text: '#c2410c' },
-  { bg: '#f5f3ff', text: '#6d28d9' },
-  { bg: '#fce7f3', text: '#be185d' },
+  { border: '#3b82f6', text: '#3b82f6' },
+  { border: '#06b6d4', text: '#06b6d4' },
+  { border: '#8b5cf6', text: '#8b5cf6' },
+  { border: '#10b981', text: '#10b981' },
+  { border: '#f59e0b', text: '#f59e0b' },
 ]
 
 const s = {
@@ -85,60 +85,59 @@ const s = {
     color: theme.colors.text,
     fontSize: theme.fontSize.base,
     lineHeight: '1.5',
+    backgroundImage: 'radial-gradient(circle, rgba(148,163,184,0.06) 0.5px, transparent 0.5px)',
+    backgroundSize: '20px 20px',
   },
   header: {
-    backgroundColor: theme.colors.bgHighlight,
+    background: theme.gradients.header,
     borderRadius: theme.borderRadius.md,
     padding: theme.spacing.lg + ' ' + theme.spacing.xl,
     marginBottom: theme.spacing.lg,
   },
+  headerAccent: {
+    width: '40px',
+    height: '2px',
+    background: theme.gradients.accentUnderline,
+    borderRadius: '1px',
+    marginTop: theme.spacing.sm,
+  },
   name: {
     fontSize: theme.fontSize.xl,
     fontWeight: '700',
-    color: theme.colors.primary,
+    color: '#ffffff',
     margin: '0',
     letterSpacing: '1px',
   },
   titleLine: {
     fontSize: theme.fontSize.lg,
-    color: theme.colors.textSecondary,
+    color: '#cbd5e1',
     marginBottom: theme.spacing.xs,
     marginTop: '2px',
   },
   contactRow: {
     fontSize: theme.fontSize.sm,
-    display: 'flex',
-    gap: '6px',
-    flexWrap: 'wrap' as const,
+    color: 'rgba(255,255,255,0.6)',
     marginTop: theme.spacing.sm,
-  },
-  contactBadge: {
-    backgroundColor: theme.colors.bg,
-    color: theme.colors.textSecondary,
-    padding: '1px 8px',
-    borderRadius: '10px',
-    border: `1px solid ${theme.colors.border}`,
   },
   section: {
     marginBottom: theme.spacing.md,
   },
   sectionTitle: {
     display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
+    flexDirection: 'column' as const,
+    gap: '2px',
     fontSize: theme.fontSize.md,
     fontWeight: '700',
-    color: theme.colors.primary,
+    color: theme.colors.primaryDark,
     textTransform: 'uppercase' as const,
     letterSpacing: '1.5px',
     marginBottom: theme.spacing.sm,
   },
-  sectionTitleBar: {
-    width: '3px',
-    height: '14px',
-    backgroundColor: theme.colors.primary,
-    borderRadius: '2px',
-    flexShrink: 0,
+  sectionTitleUnderline: {
+    width: '30px',
+    height: '2px',
+    background: theme.gradients.accentUnderline,
+    borderRadius: '1px',
   },
   paragraph: {
     marginBottom: theme.spacing.xs,
@@ -147,14 +146,22 @@ const s = {
     color: theme.colors.textSecondary,
     lineHeight: '1.6',
     fontSize: theme.fontSize.base,
-    paddingLeft: '11px',
-    borderLeft: `2px solid ${theme.colors.border}`,
   },
   expBlock: {
+    position: 'relative' as const,
     marginBottom: theme.spacing.sm,
-    paddingLeft: theme.spacing.sm,
-    borderLeft: `2px solid ${theme.colors.border}`,
+    paddingLeft: '16px',
+    borderLeft: '2px solid #3b82f6',
     ...theme.print.avoidBreak,
+  },
+  timelineDot: {
+    position: 'absolute' as const,
+    left: '-5px',
+    top: '4px',
+    width: '8px',
+    height: '8px',
+    borderRadius: '50%',
+    backgroundColor: '#3b82f6',
   },
   expHeader: {
     display: 'flex',
@@ -189,19 +196,22 @@ const s = {
     marginBottom: theme.spacing.xs,
   },
   achievementLabel: {
-    display: 'flex',
+    display: 'inline-flex',
     alignItems: 'center',
     gap: '6px',
     fontWeight: '600',
     fontSize: theme.fontSize.sm,
-    color: theme.colors.text,
+    color: theme.colors.accentTech,
+    backgroundColor: 'rgba(6,182,212,0.08)',
+    padding: '2px 8px',
+    borderRadius: '4px',
     marginTop: theme.spacing.xs,
     marginBottom: '2px',
   },
   achievementDot: {
     width: '6px',
     height: '6px',
-    backgroundColor: theme.colors.accent,
+    backgroundColor: theme.colors.accentTech,
     borderRadius: '50%',
     flexShrink: 0,
   },
@@ -210,8 +220,8 @@ const s = {
     justifyContent: 'space-between',
     alignItems: 'baseline',
     marginBottom: theme.spacing.sm,
-    paddingLeft: theme.spacing.sm,
-    borderLeft: `2px solid ${theme.colors.border}`,
+    paddingLeft: '16px',
+    borderLeft: '2px solid #3b82f6',
   },
   eduSchool: {
     fontWeight: '600',
@@ -235,13 +245,16 @@ const s = {
     borderRadius: theme.borderRadius.md,
     fontSize: theme.fontSize.sm,
     fontWeight: '500',
+    borderWidth: '1px',
+    borderStyle: 'solid' as const,
+    backgroundColor: 'transparent',
   },
   certLine: {
     marginBottom: theme.spacing.xs,
     fontSize: theme.fontSize.base,
     color: theme.colors.textSecondary,
-    paddingLeft: theme.spacing.sm,
-    borderLeft: `2px solid ${theme.colors.border}`,
+    paddingLeft: '16px',
+    borderLeft: '2px solid #3b82f6',
   },
   projUrl: {
     fontSize: theme.fontSize.sm,
@@ -313,6 +326,7 @@ function DateRange({ start, end, present }: { start?: string; end?: string | nul
 function ExperienceBlock({ exp, labels }: { exp: z.infer<typeof ExperienceSchema>; labels: ReturnType<typeof getLabels> }) {
   return (
     <div style={s.expBlock}>
+      <div style={s.timelineDot} />
       <div style={s.expHeader}>
         <span style={s.expRole}>
           <span>{exp.role}</span>
@@ -346,6 +360,7 @@ function ExperienceBlock({ exp, labels }: { exp: z.infer<typeof ExperienceSchema
 function ProjectBlock({ proj, labels }: { proj: z.infer<typeof ProjectSchema>; labels: ReturnType<typeof getLabels> }) {
   return (
     <div style={s.expBlock}>
+      <div style={s.timelineDot} />
       <div style={s.expHeader}>
         <span style={s.expRole}>
           <span>{proj.name}</span>
@@ -377,7 +392,7 @@ function ProjectBlock({ proj, labels }: { proj: z.infer<typeof ProjectSchema>; l
         </div>
       )}
       {proj.url && (
-        <div style={s.projUrl}>{proj.url}</div>
+        <div style={s.projUrl}>→ {proj.url}</div>
       )}
     </div>
   )
@@ -398,21 +413,17 @@ export function ResumeTemplate({ data }: { data: ResumeData }) {
         {data.title && <div style={s.titleLine}>{data.title}</div>}
         {contact && (
           <div style={s.contactRow}>
-            {contact.location && <span style={s.contactBadge}>{contact.location}</span>}
-            {contact.email && <span style={s.contactBadge}>{contact.email}</span>}
-            {contact.phone && <span style={s.contactBadge}>{contact.phone}</span>}
-            {contact.github && <span style={s.contactBadge}>{contact.github}</span>}
-            {contact.linkedin && <span style={s.contactBadge}>{contact.linkedin}</span>}
-            {contact.website && <span style={s.contactBadge}>{contact.website}</span>}
+            {[contact.location, contact.email, contact.phone, contact.github, contact.linkedin, contact.website].filter(Boolean).join(' · ')}
           </div>
         )}
+        <div style={s.headerAccent} />
       </div>
 
       {data.summary && (
         <div style={s.section}>
           <div style={s.sectionTitle}>
-            <div style={s.sectionTitleBar} />
             <span>{l.professionalSummary}</span>
+            <div style={s.sectionTitleUnderline} />
           </div>
           <div style={s.summary}>
             {data.summary.split(/\n+/).filter(Boolean).map((para, i) => (
@@ -425,8 +436,8 @@ export function ResumeTemplate({ data }: { data: ResumeData }) {
       {projects.length > 0 && (
         <div style={s.section}>
           <div style={s.sectionTitle}>
-            <div style={s.sectionTitleBar} />
             <span>{l.projects}</span>
+            <div style={s.sectionTitleUnderline} />
           </div>
           {projects.map((proj, i) => (
             <ProjectBlock key={i} proj={proj} labels={l} />
@@ -437,8 +448,8 @@ export function ResumeTemplate({ data }: { data: ResumeData }) {
       {experience.length > 0 && (
         <div style={s.section}>
           <div style={s.sectionTitle}>
-            <div style={s.sectionTitleBar} />
             <span>{l.experience}</span>
+            <div style={s.sectionTitleUnderline} />
           </div>
           {experience.map((exp, i) => (
             <ExperienceBlock key={i} exp={exp} labels={l} />
@@ -449,8 +460,8 @@ export function ResumeTemplate({ data }: { data: ResumeData }) {
       {education.length > 0 && (
         <div style={s.section}>
           <div style={s.sectionTitle}>
-            <div style={s.sectionTitleBar} />
             <span>{l.education}</span>
+            <div style={s.sectionTitleUnderline} />
           </div>
           {education.map((edu, i) => (
             <div key={i} style={s.eduRow}>
@@ -469,12 +480,12 @@ export function ResumeTemplate({ data }: { data: ResumeData }) {
       {skills.length > 0 && (
         <div style={s.section}>
           <div style={s.sectionTitle}>
-            <div style={s.sectionTitleBar} />
             <span>{l.skills}</span>
+            <div style={s.sectionTitleUnderline} />
           </div>
           <div style={s.skillsWrap}>
             {skills.map((skill, i) => (
-              <span key={i} style={{ ...s.skillPill, backgroundColor: pillColors[i % pillColors.length].bg, color: pillColors[i % pillColors.length].text }}>{skill}</span>
+              <span key={i} style={{ ...s.skillPill, borderColor: pillColors[i % pillColors.length].border, color: pillColors[i % pillColors.length].text }}>{skill}</span>
             ))}
           </div>
         </div>
@@ -483,8 +494,8 @@ export function ResumeTemplate({ data }: { data: ResumeData }) {
       {data.certifications && data.certifications.length > 0 && (
         <div style={s.section}>
           <div style={s.sectionTitle}>
-            <div style={s.sectionTitleBar} />
             <span>{l.certifications}</span>
+            <div style={s.sectionTitleUnderline} />
           </div>
           {data.certifications.map((cert, i) => (
             <div key={i} style={s.certLine}>

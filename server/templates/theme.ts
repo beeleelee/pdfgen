@@ -2,7 +2,9 @@ export const theme = {
   colors: {
     primary: '#1e40af',
     primaryLight: '#dbeafe',
+    primaryDark: '#1e3a5f',
     accent: '#2563eb',
+    accentTech: '#06b6d4',
     text: '#1e293b',
     textSecondary: '#475569',
     muted: '#94a3b8',
@@ -13,6 +15,10 @@ export const theme = {
     bgHighlight: '#eff6ff',
     success: '#059669',
     danger: '#dc2626',
+  },
+  gradients: {
+    header: 'linear-gradient(135deg, #0f172a, #1e3a5f)',
+    accentUnderline: 'linear-gradient(90deg, #3b82f6, #06b6d4)',
   },
   fonts: {
     sans: "'Inter', 'Helvetica Neue', Arial, sans-serif",
