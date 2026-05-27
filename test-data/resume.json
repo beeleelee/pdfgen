@@ -1,0 +1,98 @@
+{
+  "name": "Alexandra Chen",
+  "title": "Senior Full-Stack Engineer",
+  "contact": {
+    "email": "alex.chen@example.com",
+    "phone": "+1 (555) 123-4567",
+    "linkedin": "linkedin.com/in/alexchen",
+    "github": "github.com/alexchen",
+    "website": "alexchen.dev",
+    "location": "San Francisco, CA"
+  },
+  "summary": "Senior Full-Stack Engineer with 8+ years of experience building scalable web applications and distributed systems. Passionate about developer tooling, performance optimization, and clean architecture.\n\nLed engineering teams at two venture-backed startups, delivering products that served over 2M users. Strong advocate for TypeScript, test-driven development, and inclusive engineering culture.",
+  "experience": [
+    {
+      "company": "Nebula Technologies",
+      "role": "Senior Full-Stack Engineer",
+      "startDate": "Jan 2022",
+      "endDate": "Present",
+      "content": "Lead the platform team building the core orchestration engine for a cloud-native deployment platform.",
+      "bulletPoints": [
+        "Architected a real-time event pipeline processing 50K+ events/sec using Kafka and Node.js",
+        "Reduced P95 API latency by 60% through query optimization and CDN caching strategy",
+        "Mentored 4 junior engineers via weekly code reviews and pair programming sessions"
+      ],
+      "achievements": [
+        "Shipped v2.0 of the platform, increasing annual recurring revenue by 35%",
+        "Received company-wide Impact Award for leading the monolith-to-microservices migration"
+      ]
+    },
+    {
+      "company": "Quantum Labs",
+      "role": "Full-Stack Developer",
+      "startDate": "Jun 2019",
+      "endDate": "Dec 2021",
+      "content": "Core contributor on the frontend platform team, building shared component libraries and design system tooling.",
+      "bulletPoints": [
+        "Built a React component library adopted by 12 product teams across the organization",
+        "Implemented end-to-end testing infrastructure with Playwright, achieving 90% coverage",
+        "Designed a GraphQL API gateway that unified 5 legacy backend services"
+      ],
+      "achievements": [
+        "Open-sourced the component library, garnering 2.5K GitHub stars",
+        "Reduced frontend build times from 12min to 45s with incremental builds and esbuild"
+      ]
+    },
+    {
+      "company": "StartupForge",
+      "role": "Junior Developer",
+      "startDate": "Aug 2017",
+      "endDate": "May 2019",
+      "content": "Early engineering hire at an early-stage startup building a collaborative data visualization platform."
+    }
+  ],
+  "projects": [
+    {
+      "name": "Kite",
+      "role": "Creator",
+      "startDate": "2024",
+      "endDate": "Present",
+      "description": "A lightweight CLI tool for scaffolding TypeScript monorepos with opinionated defaults for ESLint, Prettier, and Vitest.",
+      "achievements": ["1.2K GitHub stars", "Featured in Node.js Weekly newsletter"],
+      "url": "github.com/alexchen/kite",
+      "technologies": ["TypeScript", "Node.js", "Commander.js"]
+    },
+    {
+      "name": "Harbor CMS",
+      "role": "Lead Developer",
+      "startDate": "2022",
+      "endDate": "2023",
+      "description": "Headless CMS platform with real-time collaboration, built for content teams at scale.",
+      "url": "harborcms.io",
+      "technologies": ["React", "PostgreSQL", "Redis", "Docker"]
+    }
+  ],
+  "education": [
+    {
+      "institution": "University of California, Berkeley",
+      "degree": "B.S.",
+      "field": "Computer Science",
+      "year": "2017"
+    },
+    {
+      "institution": "Stanford University",
+      "degree": "M.S.",
+      "field": "Software Engineering",
+      "year": "2020"
+    }
+  ],
+  "skills": [
+    "TypeScript", "React", "Node.js", "Next.js", "PostgreSQL",
+    "Redis", "Docker", "Kubernetes", "GraphQL", "AWS",
+    "CI/CD", "Playwright", "Python", "Go", "System Design"
+  ],
+  "certifications": [
+    { "name": "AWS Solutions Architect – Professional", "issuer": "Amazon Web Services", "year": "2023" },
+    { "name": "Google Cloud Professional Data Engineer", "issuer": "Google Cloud", "year": "2022" }
+  ]
+}
