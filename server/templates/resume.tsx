@@ -119,7 +119,9 @@ const s = {
     color: theme.colors.textSecondary,
     lineHeight: '1.6',
     fontSize: theme.fontSize.base,
-    whiteSpace: 'pre-wrap' as const,
+  },
+  summaryLine: {
+    marginBottom: theme.spacing.xs,
   },
   expBlock: {
     marginBottom: theme.spacing.lg,
@@ -147,9 +149,10 @@ const s = {
   },
   contentText: {
     color: theme.colors.textSecondary,
-    marginBottom: theme.spacing.sm,
     lineHeight: '1.6',
-    whiteSpace: 'pre-wrap' as const,
+  },
+  contentLine: {
+    marginBottom: theme.spacing.xs,
   },
   bulletList: {
     margin: '4px 0 0 0',
@@ -252,7 +255,13 @@ function ExperienceBlock({ exp }: { exp: z.infer<typeof ExperienceSchema> }) {
         </span>
         <DateRange start={exp.startDate} end={exp.endDate} />
       </div>
-      {exp.content && <div style={s.contentText}>{exp.content}</div>}
+      {exp.content && (
+        <div style={s.contentText}>
+          {exp.content.split('\n').map((line, i) => (
+            <div key={i} style={s.contentLine}>{line || '\u00A0'}</div>
+          ))}
+        </div>
+      )}
       {exp.bulletPoints && exp.bulletPoints.length > 0 && (
         <BulletList items={exp.bulletPoints} />
       )}
@@ -276,7 +285,13 @@ function ProjectBlock({ proj }: { proj: z.infer<typeof ProjectSchema> }) {
         </span>
         <DateRange start={proj.startDate} end={proj.endDate} />
       </div>
-      {proj.description && <div style={s.contentText}>{proj.description}</div>}
+      {proj.description && (
+        <div style={s.contentText}>
+          {proj.description.split('\n').map((line, i) => (
+            <div key={i} style={s.contentLine}>{line || '\u00A0'}</div>
+          ))}
+        </div>
+      )}
       {proj.url && (
         <div style={s.projUrl}>{proj.url}</div>
       )}
@@ -324,7 +339,11 @@ export function ResumeTemplate({ data }: { data: ResumeData }) {
       {data.summary && (
         <div style={s.section}>
           <div style={s.sectionTitle}>Professional Summary</div>
-          <div style={s.summary}>{data.summary}</div>
+          <div style={s.summary}>
+            {data.summary.split('\n').map((line, i) => (
+              <div key={i} style={s.summaryLine}>{line || '\u00A0'}</div>
+            ))}
+          </div>
         </div>
       )}
 
