@@ -315,9 +315,6 @@ function ProjectBlock({ proj, labels }: { proj: z.infer<typeof ProjectSchema>; l
           ))}
         </div>
       )}
-      {proj.url && (
-        <div style={s.projUrl}>{proj.url}</div>
-      )}
       {proj.achievements && proj.achievements.length > 0 && (
         <>
           <div style={s.achievementLabel}>{labels.keyAchievements}</div>
@@ -330,6 +327,9 @@ function ProjectBlock({ proj, labels }: { proj: z.infer<typeof ProjectSchema>; l
             <span key={i} style={s.techPill}>{t}</span>
           ))}
         </div>
+      )}
+      {proj.url && (
+        <div style={s.projUrl}>{proj.url}</div>
       )}
     </div>
   )
