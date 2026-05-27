@@ -36,7 +36,13 @@ export function Chat({ fileContent }: ChatProps) {
   return (
     <div className="flex-1 flex flex-col min-h-0">
       <div className="flex-1 overflow-y-auto space-y-4">
-        {messages.map((msg) => (
+        {messages.length === 0 ? (
+          <div className="flex items-center justify-center h-full">
+            <p className="text-gray-400 text-sm">
+              Start typing to create a PDF...
+            </p>
+          </div>
+        ) : messages.map((msg) => (
           <div key={msg.id}>
             {msg.parts.map((part, i) => {
               if (part.type === 'text') {
