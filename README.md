@@ -72,7 +72,7 @@ Works with DeepSeek, Doubao (Volcengine), OpenAI, or any service supporting the 
 ```env
 LLM_PROVIDER=openai
 OPENAI_API_KEY=sk-xxxx
-OPENAI_MODEL=Doubao-Seed-2.0-pro
+OPENAI_MODEL=deepseek-v4-pro
 OPENAI_BASE_URL=https://ark.cn-beijing.volces.com/api/v3
 ```
 
@@ -139,7 +139,7 @@ Tokens defined in `server/templates/theme.ts`:
 | `PORT` | Backend port | `3001` |
 | `LLM_PROVIDER` | Provider (openai / ollama) | `openai` |
 | `OPENAI_API_KEY` | OpenAI-compatible API key | — |
-| `OPENAI_MODEL` | Model name | `Doubao-Seed-2.0-pro` |
+| `OPENAI_MODEL` | Model name | `deepseek-v4-pro` |
 | `OPENAI_BASE_URL` | API base URL | — |
 | `OLLAMA_BASE_URL` | Ollama server URL | `http://localhost:11434/api` |
 | `OLLAMA_MODEL` | Ollama model name | `llama3.1` |

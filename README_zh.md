@@ -72,7 +72,7 @@ server/              # Express 后端
 ```env
 LLM_PROVIDER=openai
 OPENAI_API_KEY=sk-xxxx
-OPENAI_MODEL=Doubao-Seed-2.0-pro
+OPENAI_MODEL=deepseek-v4-pro
 OPENAI_BASE_URL=https://ark.cn-beijing.volces.com/api/v3
 ```
 
@@ -139,7 +139,7 @@ OLLAMA_MODEL=llama3.1
 | `PORT` | 后端监听端口 | `3001` |
 | `LLM_PROVIDER` | 模型提供商（openai / ollama） | `openai` |
 | `OPENAI_API_KEY` | OpenAI 兼容 API 密钥 | — |
-| `OPENAI_MODEL` | OpenAI 兼容模型名称 | `Doubao-Seed-2.0-pro` |
+| `OPENAI_MODEL` | OpenAI 兼容模型名称 | `deepseek-v4-pro` |
 | `OPENAI_BASE_URL` | OpenAI 兼容 API 地址 | — |
 | `OLLAMA_BASE_URL` | Ollama 服务地址 | `http://localhost:11434/api` |
 | `OLLAMA_MODEL` | Ollama 模型名称 | `llama3.1` |
