@@ -101,6 +101,11 @@ const s = {
     borderRadius: '1px',
     marginTop: theme.spacing.sm,
   },
+  nameRow: {
+    display: 'flex',
+    alignItems: 'baseline',
+    gap: '12px',
+  },
   name: {
     fontSize: theme.fontSize.xl,
     fontWeight: '700',
@@ -111,8 +116,6 @@ const s = {
   titleLine: {
     fontSize: theme.fontSize.lg,
     color: '#cbd5e1',
-    marginBottom: theme.spacing.xs,
-    marginTop: '2px',
   },
   contactRow: {
     fontSize: theme.fontSize.sm,
@@ -409,8 +412,10 @@ export function ResumeTemplate({ data }: { data: ResumeData }) {
   return (
     <div style={s.page}>
       <div style={s.header}>
-        <h1 style={s.name}>{data.name}</h1>
-        {data.title && <div style={s.titleLine}>{data.title}</div>}
+        <div style={s.nameRow}>
+          <h1 style={s.name}>{data.name}</h1>
+          {data.title && <span style={s.titleLine}>{data.title}</span>}
+        </div>
         {contact && (
           <div style={s.contactRow}>
             {[contact.location, contact.email, contact.phone, contact.github, contact.linkedin, contact.website].filter(Boolean).join(' · ')}
