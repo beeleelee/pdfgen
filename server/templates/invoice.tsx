@@ -1,7 +1,11 @@
+// Module: server/templates/invoice.tsx — Invoice template with computed subtotals, tax, and totals.
+// Features: auto-generated invoice number, date formatting, and a line-item table.
+
 import React from 'react'
 import { z } from 'zod'
 import { theme } from './theme.js'
 
+// ─── Zod schema ──────────────────────────────────────────────
 export const InvoiceDataSchema = z.object({
   invoiceNumber: z.string().optional().describe('Unique invoice identifier'),
   issueDate: z.coerce.string().optional().describe('Date of issue (e.g. 2024-01-15)'),
@@ -16,6 +20,7 @@ export const InvoiceDataSchema = z.object({
     address: z.string().optional(),
     email: z.string().optional(),
   }),
+  // Line items: amount can be explicit or computed from quantity × rate
   lineItems: z
     .array(
       z.object({
@@ -34,6 +39,7 @@ export const InvoiceDataSchema = z.object({
 
 export type InvoiceData = z.infer<typeof InvoiceDataSchema>
 
+// ─── Style definitions ───────────────────────────────────────
 const s = {
   page: {
     fontFamily: theme.fonts.sans,
@@ -44,6 +50,7 @@ const s = {
     fontSize: theme.fontSize.base,
     lineHeight: '1.6',
   },
+  // Header: INVOICE title on the left, meta (number, dates) on the right
   header: {
     display: 'flex',
     justifyContent: 'space-between',
@@ -77,6 +84,7 @@ const s = {
     letterSpacing: '1px',
     marginBottom: theme.spacing.sm,
   },
+  // Side-by-side sender / recipient addresses
   addressRow: {
     display: 'flex',
     justifyContent: 'space-between',
@@ -93,6 +101,7 @@ const s = {
     color: theme.colors.text,
     marginBottom: theme.spacing.xs,
   },
+  // Line items table
   table: {
     width: '100%',
     borderCollapse: 'collapse' as const,
@@ -132,6 +141,7 @@ const s = {
     textAlign: 'right' as const,
     fontVariantNumeric: 'tabular-nums' as const,
   },
+  // Totals section (right-aligned, below the table)
   totals: {
     marginLeft: 'auto',
     width: '280px',
@@ -155,6 +165,7 @@ const s = {
     fontWeight: '700',
     color: theme.colors.primary,
   },
+  // Notes section: muted box at the bottom
   notes: {
     marginTop: theme.spacing.section,
     padding: theme.spacing.lg,
@@ -171,14 +182,20 @@ const s = {
   },
 }
 
+/** Formats a number as USD currency (e.g. 1234.5 → "$1,234.50"). */
 function fmt(n: number): string {
   return `$${n.toFixed(2)}`
 }
 
+/** Coerces null/undefined/NaN to fallback (default 0). */
 function num(n: number | undefined | null, fallback = 0): number {
   return (n != null && !isNaN(n)) ? n : fallback
 }
 
+/**
+ * Computes the subtotal from line items.
+ * Uses explicit `amount` if provided, otherwise falls back to quantity × rate.
+ */
 function computeSubtotal(items: InvoiceData['lineItems']): number {
   return items.reduce((sum, item) => {
     const amount = num(item.amount)
@@ -187,14 +204,20 @@ function computeSubtotal(items: InvoiceData['lineItems']): number {
   }, 0)
 }
 
+/** Formats a date string, defaulting to today (YYYY-MM-DD) if empty. */
 function formatDate(d: string): string {
   if (d) return d
   const now = new Date()
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
 }
 
+/**
+ * InvoiceTemplate — professional invoice layout.
+ * Renders: header (title + meta) → sender/recipient → line items table → totals → notes.
+ */
 export function InvoiceTemplate({ data }: { data: InvoiceData }) {
   const items = data.lineItems || []
+  // Compute defaults: subtotal from items if not provided, total = subtotal + tax
   const subtotal = data.subtotal ?? computeSubtotal(items)
   const total = data.total ?? (subtotal + (data.tax || 0))
 

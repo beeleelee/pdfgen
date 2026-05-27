@@ -1,3 +1,7 @@
+// Module: server/routes/render-test.ts — Debug/testing endpoint for template rendering.
+// Useful for iterating on template designs and data schemas without going through the LLM.
+// Supports returning HTML (for visual inspection) or PDF (for end-to-end testing).
+
 import { Router, type Request, type Response } from 'express'
 import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
@@ -8,6 +12,14 @@ import { generatePdf, storePdf } from '../pdf/generator.js'
 
 const router = Router()
 
+/**
+ * POST /api/render-test
+ *
+ * Body:
+ *   - template: "invoice" | "resume" | "letter"
+ *   - data: Record<string, unknown> — raw data (preprocessing applied automatically)
+ *   - format?: "html" | "pdf" — defaults to HTML
+ */
 router.post('/', async (req: Request, res: Response) => {
   const { template, data, format } = req.body as {
     template?: string
@@ -28,6 +40,7 @@ router.post('/', async (req: Request, res: Response) => {
 
   console.log('[render-test] raw data:', JSON.stringify(data, null, 2))
 
+  // Reuses the same preprocessing and validation pipeline as the LLM tool
   const augmented = preprocessData(data)
   const parsed = entry.schema.safeParse(augmented)
   if (!parsed.success) {
@@ -36,6 +49,7 @@ router.post('/', async (req: Request, res: Response) => {
     return
   }
 
+  // Render the React template to static HTML
   let html: string
   try {
     html = renderToStaticMarkup(
@@ -47,6 +61,7 @@ router.post('/', async (req: Request, res: Response) => {
     return
   }
 
+  // If format=pdf, go through Playwright; otherwise send the HTML directly
   if (format === 'pdf') {
     const fullHtml = wrapHtml(html)
     const pdfBuffer = await generatePdf(fullHtml)

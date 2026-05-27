@@ -1,6 +1,14 @@
+// Module: server/templates/resume.tsx — Resume/CV template with bilingual (CN/EN) support.
+// Includes Zod schemas for validation and a React component with professional layout,
+// timeline-style experience blocks, skill pills, and section headers.
+
 import React from 'react'
 import { z } from 'zod'
 import { theme } from './theme.js'
+
+// ─── Zod schemas ──────────────────────────────────────────────
+// Each schema maps to a section of the resume. The LLM generates data
+// that gets validated against these before rendering.
 
 export const ExperienceSchema = z.object({
   company: z.string().describe('Company or organization name'),
@@ -8,10 +16,12 @@ export const ExperienceSchema = z.object({
   startDate: z.string().optional().describe('Start date (e.g. Jan 2020)'),
   endDate: z.coerce.string().nullable().optional().describe('End date (e.g. Dec 2023, or "Present")'),
   content: z.string().optional().describe('Description of responsibilities and context'),
+  // bulletPoints: daily tasks / regular duties
   bulletPoints: z
     .array(z.string())
     .optional()
     .describe('Key responsibilities and daily tasks'),
+  // achievements: notable results / 业绩
   achievements: z
     .array(z.string())
     .optional()
@@ -68,6 +78,7 @@ export const ResumeDataSchema = z.object({
 
 export type ResumeData = z.infer<typeof ResumeDataSchema>
 
+// Cycling palette for skill pills — each skill gets the next color
 const pillColors = [
   { border: '#3b82f6', text: '#3b82f6' },
   { border: '#06b6d4', text: '#06b6d4' },
@@ -76,7 +87,11 @@ const pillColors = [
   { border: '#f59e0b', text: '#f59e0b' },
 ]
 
+// ─── Inline style definitions ─────────────────────────────────
+// Centralized style object for the resume template. Organized by section
+// to make the component JSX cleaner and facilitate reuse.
 const s = {
+  // Page-level container with subtle dot-grid background
   page: {
     fontFamily: theme.fonts.sans,
     maxWidth: '800px',
@@ -88,6 +103,7 @@ const s = {
     backgroundImage: 'radial-gradient(circle, rgba(148,163,184,0.06) 0.5px, transparent 0.5px)',
     backgroundSize: '20px 20px',
   },
+  // Header with dark gradient background and white text
   header: {
     background: theme.gradients.header,
     borderRadius: theme.borderRadius.md,
@@ -122,9 +138,11 @@ const s = {
     color: 'rgba(255,255,255,0.6)',
     marginTop: theme.spacing.sm,
   },
+  // Section container with bottom margin
   section: {
     marginBottom: theme.spacing.md,
   },
+  // Section title with uppercase label and colored underline
   sectionTitle: {
     display: 'flex',
     flexDirection: 'column' as const,
@@ -150,6 +168,7 @@ const s = {
     lineHeight: '1.6',
     fontSize: theme.fontSize.base,
   },
+  // Experience/project block with left blue border timeline style
   expBlock: {
     position: 'relative' as const,
     marginBottom: theme.spacing.sm,
@@ -198,6 +217,7 @@ const s = {
   bullet: {
     marginBottom: theme.spacing.xs,
   },
+  // "Key Achievements" / 业绩 label with cyan accent
   achievementLabel: {
     display: 'inline-flex',
     alignItems: 'center',
@@ -218,6 +238,7 @@ const s = {
     borderRadius: '50%',
     flexShrink: 0,
   },
+  // Education row with left border
   eduRow: {
     display: 'flex',
     justifyContent: 'space-between',
@@ -280,6 +301,10 @@ const s = {
   },
 }
 
+/**
+ * Picks Chinese or English labels based on detecting CJK characters in the name/summary.
+ * This lets the template auto-adapt for bilingual users without explicit configuration.
+ */
 function getLabels(data: ResumeData) {
   const isCn = /[\u4e00-\u9fff]/.test(data.name || data.summary || '')
   return isCn
@@ -307,6 +332,7 @@ function getLabels(data: ResumeData) {
       }
 }
 
+/** Renders an unordered list of bullet points. */
 function BulletList({ items }: { items: string[] }) {
   return (
     <ul style={s.bulletList}>
@@ -317,6 +343,7 @@ function BulletList({ items }: { items: string[] }) {
   )
 }
 
+/** Formats a date range (e.g. "Jan 2020 — Present"). Returns null if no start date. */
 function DateRange({ start, end, present }: { start?: string; end?: string | null; present: string }) {
   if (!start) return null
   return (
@@ -326,6 +353,7 @@ function DateRange({ start, end, present }: { start?: string; end?: string | nul
   )
 }
 
+/** Single experience entry with timeline style, content paragraphs, bullet points, and achievements. */
 function ExperienceBlock({ exp, labels }: { exp: z.infer<typeof ExperienceSchema>; labels: ReturnType<typeof getLabels> }) {
   return (
     <div style={s.expBlock}>
@@ -337,6 +365,7 @@ function ExperienceBlock({ exp, labels }: { exp: z.infer<typeof ExperienceSchema
         </span>
         <DateRange start={exp.startDate} end={exp.endDate} present={labels.present} />
       </div>
+      {/* Content is split on \n+ to handle multi-paragraph LLM output */}
       {exp.content && (
         <div style={s.contentText}>
             {exp.content.split(/\n+/).filter(Boolean).map((para, i) => (
@@ -360,6 +389,7 @@ function ExperienceBlock({ exp, labels }: { exp: z.infer<typeof ExperienceSchema
   )
 }
 
+/** Single project entry — similar layout to ExperienceBlock but with technology pills and URL. */
 function ProjectBlock({ proj, labels }: { proj: z.infer<typeof ProjectSchema>; labels: ReturnType<typeof getLabels> }) {
   return (
     <div style={s.expBlock}>
@@ -401,6 +431,11 @@ function ProjectBlock({ proj, labels }: { proj: z.infer<typeof ProjectSchema>; l
   )
 }
 
+/**
+ * ResumeTemplate — the main resume component.
+ * Renders sections in order: header → summary → projects → experience → education → skills → certifications.
+ * Uses bilingual labels (CN/EN) based on the name/summary content.
+ */
 export function ResumeTemplate({ data }: { data: ResumeData }) {
   const contact = data.contact
   const experience = data.experience || []
@@ -411,6 +446,7 @@ export function ResumeTemplate({ data }: { data: ResumeData }) {
 
   return (
     <div style={s.page}>
+      {/* Header: name, title, contact info joined by bullets */}
       <div style={s.header}>
         <div style={s.nameRow}>
           <h1 style={s.name}>{data.name}</h1>
@@ -424,6 +460,7 @@ export function ResumeTemplate({ data }: { data: ResumeData }) {
         <div style={s.headerAccent} />
       </div>
 
+      {/* Professional Summary — split on newlines for multi-paragraph LLM output */}
       {data.summary && (
         <div style={s.section}>
           <div style={s.sectionTitle}>
@@ -438,6 +475,7 @@ export function ResumeTemplate({ data }: { data: ResumeData }) {
         </div>
       )}
 
+      {/* Projects section (rendered before experience for Chinese resume convention) */}
       {projects.length > 0 && (
         <div style={s.section}>
           <div style={s.sectionTitle}>
@@ -450,6 +488,7 @@ export function ResumeTemplate({ data }: { data: ResumeData }) {
         </div>
       )}
 
+      {/* Experience section */}
       {experience.length > 0 && (
         <div style={s.section}>
           <div style={s.sectionTitle}>
@@ -462,6 +501,7 @@ export function ResumeTemplate({ data }: { data: ResumeData }) {
         </div>
       )}
 
+      {/* Education section */}
       {education.length > 0 && (
         <div style={s.section}>
           <div style={s.sectionTitle}>
@@ -482,6 +522,7 @@ export function ResumeTemplate({ data }: { data: ResumeData }) {
         </div>
       )}
 
+      {/* Skills — rendered as colored pills that cycle through pillColors */}
       {skills.length > 0 && (
         <div style={s.section}>
           <div style={s.sectionTitle}>
@@ -496,6 +537,7 @@ export function ResumeTemplate({ data }: { data: ResumeData }) {
         </div>
       )}
 
+      {/* Certifications */}
       {data.certifications && data.certifications.length > 0 && (
         <div style={s.section}>
           <div style={s.sectionTitle}>

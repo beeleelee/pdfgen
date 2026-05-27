@@ -1,20 +1,30 @@
+// Module: src/components/Chat.tsx — Chat UI component using AI SDK v6's useChat hook.
+// Renders message history with support for text parts and tool invocation parts (PDF links).
+// Uses DefaultChatTransport for server-sent events over HTTP.
+
 import { useChat } from '@ai-sdk/react'
 import { DefaultChatTransport } from 'ai'
 import { useRef, type KeyboardEvent } from 'react'
 
 interface ChatProps {
+  /** Content of an uploaded .txt/.md file, appended to the next user message. */
   fileContent: string | null
 }
 
 export function Chat({ fileContent }: ChatProps) {
+  // AI SDK v6: useChat with DefaultChatTransport (not the older handleSubmit-based API).
+  // sendMessage({ text }) replaces the old append() pattern.
+  // status replaces isLoading: 'ready' | 'submitted' | 'streaming' | 'error'.
   const { messages, sendMessage, status, error } = useChat({
     transport: new DefaultChatTransport({ api: '/api/chat' }),
   })
 
   const inputRef = useRef<HTMLTextAreaElement>(null)
+  // Store fileContent in a ref so the handleSubmit closure always gets the latest value
   const fileContentRef = useRef(fileContent)
   fileContentRef.current = fileContent
 
+  /** Enter sends the message; Shift+Enter inserts a newline. */
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
@@ -27,6 +37,7 @@ export function Chat({ fileContent }: ChatProps) {
     const text = inputRef.current?.value?.trim()
     if (!text || status !== 'ready') return
 
+    // If a file was dropped, append its content after a separator
     const content = fileContentRef.current
       ? text + '\n\n---\n\n' + fileContentRef.current
       : text
@@ -52,6 +63,7 @@ export function Chat({ fileContent }: ChatProps) {
         <div className="flex-1 overflow-y-auto space-y-4">
           {messages.map((msg) => (
             <div key={msg.id}>
+              {/* messages have a parts[] array containing text and tool-* parts */}
               {msg.parts.map((part, i) => {
                 if (part.type === 'text') {
                   return (
@@ -70,6 +82,8 @@ export function Chat({ fileContent }: ChatProps) {
                     </div>
                   )
                 }
+                // Tool parts (e.g. tool-render_pdf) render a PDF link when output is available,
+                // or a "Generating..." placeholder while the tool is executing.
                 if (part.type.startsWith('tool-')) {
                   const toolPart = part as { state?: string; output?: { pdfId?: string } }
                   if (toolPart.state === 'output-available' && toolPart.output?.pdfId) {
@@ -106,6 +120,7 @@ export function Chat({ fileContent }: ChatProps) {
         </div>
       )}
 
+      {/* Input form — textarea + send button */}
       <form onSubmit={handleSubmit} className="pt-4">
         <div className="flex gap-2">
           <textarea

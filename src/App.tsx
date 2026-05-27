@@ -1,3 +1,6 @@
+// Module: src/App.tsx — Root React component.
+// Provides drag-and-drop file upload (.txt/.md) and renders the Chat component.
+
 import { useState, useRef, type DragEvent } from 'react'
 import { Chat } from './components/Chat'
 
@@ -5,8 +8,11 @@ export default function App() {
   const [fileContent, setFileContent] = useState<string | null>(null)
   const [filename, setFilename] = useState<string | null>(null)
   const [isDragging, setIsDragging] = useState(false)
+  // dragCount ref handles nested drag enter/leave events correctly
+  // (enter fires on children, so we only show the overlay when count > 0)
   const dragCount = useRef(0)
 
+  /** Reads a .txt or .md file and stores its content for the Chat component. */
   const handleFile = (file: File) => {
     if (!file.name.endsWith('.txt') && !file.name.endsWith('.md')) return
     const reader = new FileReader()
@@ -53,6 +59,7 @@ export default function App() {
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >
+      {/* Drag overlay — shown when a file is being dragged over the window */}
       {isDragging && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80">
           <p className="text-lg text-gray-600 font-medium">
@@ -61,6 +68,7 @@ export default function App() {
         </div>
       )}
 
+      {/* Header bar with app name and optional file indicator */}
       <header className="border-b border-gray-200 bg-white">
         <div className="max-w-3xl mx-auto px-4 h-12 flex items-center justify-between">
           <span className="font-semibold text-gray-800">pdfgen</span>
@@ -80,6 +88,7 @@ export default function App() {
         </div>
       </header>
 
+      {/* Chat panel */}
       <main className="flex-1 min-h-0">
         <div className="h-full max-w-3xl mx-auto px-4 py-4 flex flex-col min-h-0">
           <Chat fileContent={fileContent} />

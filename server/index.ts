@@ -1,3 +1,5 @@
+// Module: server/index.ts — Express entry point: mounts API routes, serves production build, provides a PDF debug endpoint.
+
 import 'dotenv/config'
 import express from 'express'
 import path from 'path'
@@ -14,14 +16,18 @@ const port = process.env.PORT || 3001
 
 app.use(express.json())
 
+// Mount API route modules
 app.use('/api/chat', chatRouter)
 app.use('/api/pdf', pdfRouter)
 app.use('/api/render-test', renderTestRouter)
 
+// Simple health-check endpoint
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok' })
 })
 
+// Debug endpoint: generates a quick test PDF with an optional ?watermark= query param.
+// Useful for verifying Playwright integration and watermark rendering without going through the LLM.
 app.get('/api/pdf-test', async (req, res) => {
   const watermark = (req.query.watermark as string) || ''
   const html = `<!DOCTYPE html>
@@ -72,6 +78,7 @@ app.get('/api/pdf-test', async (req, res) => {
     const browser = await chromium.launch()
     const page = await browser.newPage()
     await page.setContent(html, { waitUntil: 'networkidle' })
+    // Generate PDF with page numbers in the footer via displayHeaderFooter
     const pdf = await page.pdf({
       format: 'A4',
       margin: { top: '40px', bottom: '60px', left: '0', right: '0' },
@@ -90,6 +97,7 @@ app.get('/api/pdf-test', async (req, res) => {
   }
 })
 
+// In production, serve the Vite-built static files and fall back to index.html for client-side routing.
 if (process.env.NODE_ENV === 'production') {
   const __dirname = path.dirname(fileURLToPath(import.meta.url))
   app.use(express.static(path.resolve(__dirname, '../dist')))

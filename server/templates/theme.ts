@@ -1,4 +1,9 @@
+// Module: server/templates/theme.ts — Shared design token theme for all PDF templates.
+// All templates import this to ensure consistent colors, typography, spacing, and
+// print-friendly CSS properties across invoice, resume, and letter documents.
+
 export const theme = {
+  // Color palette — blue-based professional scheme
   colors: {
     primary: '#1e40af',
     primaryLight: '#dbeafe',
@@ -16,15 +21,18 @@ export const theme = {
     success: '#059669',
     danger: '#dc2626',
   },
+  // Gradient definitions for header backgrounds and decorative underlines
   gradients: {
     header: 'linear-gradient(135deg, #0f172a, #1e3a5f)',
     accentUnderline: 'linear-gradient(90deg, #3b82f6, #06b6d4)',
   },
+  // Font stacks — Inter is loaded via Google Fonts in wrapHtml()
   fonts: {
     sans: "'Inter', 'Helvetica Neue', Arial, sans-serif",
     serif: "'Georgia', 'Times New Roman', serif",
     mono: "'JetBrains Mono', 'Courier New', monospace",
   },
+  // Font sizes (small because PDFs use physical page dimensions)
   fontSize: {
     xs: '9px',
     sm: '10px',
@@ -35,6 +43,7 @@ export const theme = {
     xxl: '24px',
     title: '30px',
   },
+  // Consistent spacing scale
   spacing: {
     xs: '4px',
     sm: '8px',
@@ -53,6 +62,7 @@ export const theme = {
     md: '2px',
     lg: '3px',
   },
+  // Print-specific CSS utilities to prevent awkward page breaks
   print: {
     avoidBreak: {
       pageBreakInside: 'avoid' as const,

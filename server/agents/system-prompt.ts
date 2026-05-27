@@ -1,5 +1,16 @@
+// Module: server/agents/system-prompt.ts — Dynamically generates the LLM system prompt
+// by pulling template descriptions from the registry so the prompt stays in sync.
+
 import { templateRegistry } from '../templates/registry.js'
 
+/**
+ * Builds the system prompt for the LLM.
+ *
+ * Iterates the template registry to produce a list of available templates
+ * with their expected data fields so the LLM knows what to ask the user for.
+ * Also includes instructions for handling Chinese content, watermarks, and
+ * data normalization.
+ */
 function buildPrompt(): string {
   const templateDescriptions = Array.from(templateRegistry.entries())
     .map(([name, entry]) => {

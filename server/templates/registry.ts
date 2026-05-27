@@ -1,9 +1,15 @@
+// Module: server/templates/registry.ts — Template registry.
+// Maps template names (string) to their React component, Zod schema,
+// human-readable description, and expected data structure documentation.
+// The LLM uses this data in the system prompt to understand what templates are available.
+
 import React from 'react'
 import { z } from 'zod'
 import { InvoiceTemplate, InvoiceDataSchema } from './invoice.js'
 import { ResumeTemplate, ResumeDataSchema } from './resume.js'
 import { LetterTemplate, LetterDataSchema } from './letter.js'
 
+/** A registered template with component, schema, and docs for the LLM. */
 export interface TemplateEntry {
   component: React.FC<{ data: any }>
   schema: z.ZodTypeAny
@@ -13,6 +19,7 @@ export interface TemplateEntry {
 
 export const templateRegistry = new Map<string, TemplateEntry>()
 
+// ─── Invoice template ───────────────────────────────────────────
 templateRegistry.set('invoice', {
   component: InvoiceTemplate as React.FC<{ data: any }>,
   schema: InvoiceDataSchema,
@@ -31,6 +38,7 @@ templateRegistry.set('invoice', {
   - notes? (string)`,
 })
 
+// ─── Resume template ────────────────────────────────────────────
 templateRegistry.set('resume', {
   component: ResumeTemplate as React.FC<{ data: any }>,
   schema: ResumeDataSchema,
@@ -49,6 +57,7 @@ templateRegistry.set('resume', {
   - certifications?: [{ name, issuer?, year? }]`,
 })
 
+// ─── Letter template ────────────────────────────────────────────
 templateRegistry.set('letter', {
   component: LetterTemplate as React.FC<{ data: any }>,
   schema: LetterDataSchema,

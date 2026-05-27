@@ -1,7 +1,11 @@
+// Module: server/templates/letter.tsx — Formal letter template with traditional correspondence layout.
+// Uses serif font for a classic letter feel, with sender/recipient blocks, subject line, and closing.
+
 import React from 'react'
 import { z } from 'zod'
 import { theme } from './theme.js'
 
+// ─── Zod schema ──────────────────────────────────────────────
 export const LetterDataSchema = z.object({
   date: z.coerce.string().optional().describe('Date of the letter'),
   recipient: z.object({
@@ -22,7 +26,9 @@ export const LetterDataSchema = z.object({
 
 export type LetterData = z.infer<typeof LetterDataSchema>
 
+// ─── Style definitions ───────────────────────────────────────
 const s = {
+  // Page uses serif font for a traditional letter appearance
   page: {
     fontFamily: theme.fonts.serif,
     maxWidth: '680px',
@@ -81,8 +87,13 @@ const s = {
   },
 }
 
+/**
+ * LetterTemplate — traditional formal letter layout.
+ * Sections: sender → date → recipient → subject → body → closing + signature.
+ */
 export function LetterTemplate({ data }: { data: LetterData }) {
   const body = data.body || ''
+  // Split body on double newlines to create separate paragraphs
   const paragraphs = body.split(/\n\n+/).filter(Boolean)
 
   return (
