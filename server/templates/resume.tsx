@@ -140,15 +140,15 @@ const s = {
     borderRadius: '2px',
     flexShrink: 0,
   },
+  paragraph: {
+    marginBottom: theme.spacing.xs,
+  },
   summary: {
     color: theme.colors.textSecondary,
     lineHeight: '1.6',
     fontSize: theme.fontSize.base,
     paddingLeft: '11px',
     borderLeft: `2px solid ${theme.colors.border}`,
-  },
-  summaryLine: {
-    marginBottom: theme.spacing.xs,
   },
   expBlock: {
     marginBottom: theme.spacing.sm,
@@ -179,9 +179,6 @@ const s = {
   contentText: {
     color: theme.colors.textSecondary,
     lineHeight: '1.6',
-  },
-  contentLine: {
-    marginBottom: theme.spacing.xs,
   },
   bulletList: {
     margin: '4px 0 0 0',
@@ -325,10 +322,10 @@ function ExperienceBlock({ exp, labels }: { exp: z.infer<typeof ExperienceSchema
       </div>
       {exp.content && (
         <div style={s.contentText}>
-          {exp.content.split('\n').map((line, i) => (
-            <div key={i} style={s.contentLine}>{line || '\u00A0'}</div>
-          ))}
-        </div>
+            {exp.content.split(/\n+/).filter(Boolean).map((para, i) => (
+              <div key={i} style={s.paragraph}>{para}</div>
+            ))}
+          </div>
       )}
       {exp.bulletPoints && exp.bulletPoints.length > 0 && (
         <BulletList items={exp.bulletPoints} />
@@ -358,10 +355,10 @@ function ProjectBlock({ proj, labels }: { proj: z.infer<typeof ProjectSchema>; l
       </div>
       {proj.description && (
         <div style={s.contentText}>
-          {proj.description.split('\n').map((line, i) => (
-            <div key={i} style={s.contentLine}>{line || '\u00A0'}</div>
-          ))}
-        </div>
+            {proj.description.split(/\n+/).filter(Boolean).map((para, i) => (
+              <div key={i} style={s.paragraph}>{para}</div>
+            ))}
+          </div>
       )}
       {proj.achievements && proj.achievements.length > 0 && (
         <>
@@ -418,8 +415,8 @@ export function ResumeTemplate({ data }: { data: ResumeData }) {
             <span>{l.professionalSummary}</span>
           </div>
           <div style={s.summary}>
-            {data.summary.split('\n').map((line, i) => (
-              <div key={i} style={s.summaryLine}>{line || '\u00A0'}</div>
+            {data.summary.split(/\n+/).filter(Boolean).map((para, i) => (
+              <div key={i} style={s.paragraph}>{para}</div>
             ))}
           </div>
         </div>
