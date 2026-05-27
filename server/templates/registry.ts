@@ -48,21 +48,21 @@ templateRegistry.set('invoice', {
 })
 
 // ─── Resume template (with style variants) ──────────────────────
-// Default style is "modern" (blue gradient header, timeline layout).
-// Additional styles: "classic" (serif, bordered boxes), "minimal" (clean, thin HR separators),
-// "uni" (two-column formal), "github" (GitHub UI aesthetic), "shadcn" (warm clean modern).
+// Default style is "shadcn" (warm clean modern, card-based).
+// Other styles: "modern" (blue gradient header, timeline), "classic" (serif, bordered boxes),
+// "minimal" (clean, thin HR separators), "uni" (two-column formal), "github" (GitHub UI aesthetic).
 templateRegistry.set('resume', {
-  component: ResumeTemplate as React.FC<{ data: any }>,
+  component: ResumeShadcnTemplate as React.FC<{ data: any }>,
   schema: ResumeDataSchema,
   styles: {
+    modern: ResumeTemplate as React.FC<{ data: any }>,
     classic: ResumeClassicTemplate as React.FC<{ data: any }>,
     minimal: ResumeMinimalTemplate as React.FC<{ data: any }>,
     uni: ResumeUniTemplate as React.FC<{ data: any }>,
     github: ResumeGithubTemplate as React.FC<{ data: any }>,
-    shadcn: ResumeShadcnTemplate as React.FC<{ data: any }>,
   },
-  description: 'Resume/CV template for creating professional resumes with experience, education, skills, and projects. Supports style variants: modern (default), classic, minimal, uni, github, shadcn.',
-  dataDescription: `Styles: modern (default), classic, minimal, uni, github, shadcn
+  description: 'Resume/CV template for creating professional resumes with experience, education, skills, and projects. Supports style variants: shadcn (default), modern, classic, minimal, uni, github.',
+  dataDescription: `Styles: shadcn (default), modern, classic, minimal, uni, github
 Fields:
   - name (string, REQUIRED): Full name of the person
   - title? (string): Professional headline

@@ -131,7 +131,7 @@ export const tools = {
         .string()
         .optional()
         .describe(
-          'Style variant for the template. For resume: "modern" (default), "classic", or "minimal". Ask the user which style they prefer before generating.'
+          'Style variant for the template. For resume: "shadcn" (default), "modern", "classic", "minimal", "uni", "github". Ask the user which style they prefer before generating.'
         ),
       watermark: z
         .string()
