@@ -10,6 +10,9 @@ import { ResumeTemplate } from './resume.js'
 import { ResumeDataSchema } from './resume-shared.js'
 import { ResumeClassicTemplate } from './resume-classic.js'
 import { ResumeMinimalTemplate } from './resume-minimal.js'
+import { ResumeUniTemplate } from './resume-uni.js'
+import { ResumeGithubTemplate } from './resume-github.js'
+import { ResumeShadcnTemplate } from './resume-shadcn.js'
 import { LetterTemplate, LetterDataSchema } from './letter.js'
 
 /** A registered template with component, schema, and docs for the LLM. */
@@ -46,16 +49,20 @@ templateRegistry.set('invoice', {
 
 // ─── Resume template (with style variants) ──────────────────────
 // Default style is "modern" (blue gradient header, timeline layout).
-// Additional styles: "classic" (serif, bordered boxes), "minimal" (clean, thin HR separators).
+// Additional styles: "classic" (serif, bordered boxes), "minimal" (clean, thin HR separators),
+// "uni" (two-column formal), "github" (GitHub UI aesthetic), "shadcn" (warm clean modern).
 templateRegistry.set('resume', {
   component: ResumeTemplate as React.FC<{ data: any }>,
   schema: ResumeDataSchema,
   styles: {
     classic: ResumeClassicTemplate as React.FC<{ data: any }>,
     minimal: ResumeMinimalTemplate as React.FC<{ data: any }>,
+    uni: ResumeUniTemplate as React.FC<{ data: any }>,
+    github: ResumeGithubTemplate as React.FC<{ data: any }>,
+    shadcn: ResumeShadcnTemplate as React.FC<{ data: any }>,
   },
-  description: 'Resume/CV template for creating professional resumes with experience, education, skills, and projects. Supports style variants: modern (default), classic, minimal.',
-  dataDescription: `Styles: modern (default), classic, minimal
+  description: 'Resume/CV template for creating professional resumes with experience, education, skills, and projects. Supports style variants: modern (default), classic, minimal, uni, github, shadcn.',
+  dataDescription: `Styles: modern (default), classic, minimal, uni, github, shadcn
 Fields:
   - name (string, REQUIRED): Full name of the person
   - title? (string): Professional headline
