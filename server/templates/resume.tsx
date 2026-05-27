@@ -68,6 +68,14 @@ export const ResumeDataSchema = z.object({
 
 export type ResumeData = z.infer<typeof ResumeDataSchema>
 
+const pillColors = [
+  { bg: '#eff6ff', text: '#1e40af' },
+  { bg: '#f0fdf4', text: '#15803d' },
+  { bg: '#fff7ed', text: '#c2410c' },
+  { bg: '#f5f3ff', text: '#6d28d9' },
+  { bg: '#fce7f3', text: '#be185d' },
+]
+
 const s = {
   page: {
     fontFamily: theme.fonts.sans,
@@ -79,8 +87,9 @@ const s = {
     lineHeight: '1.5',
   },
   header: {
-    borderBottom: `${theme.borderWidth.md} solid ${theme.colors.primary}`,
-    paddingBottom: theme.spacing.lg,
+    backgroundColor: theme.colors.bgHighlight,
+    borderRadius: theme.borderRadius.md,
+    padding: theme.spacing.lg + ' ' + theme.spacing.xl,
     marginBottom: theme.spacing.lg,
   },
   name: {
@@ -94,37 +103,57 @@ const s = {
     fontSize: theme.fontSize.lg,
     color: theme.colors.textSecondary,
     marginBottom: theme.spacing.xs,
+    marginTop: '2px',
   },
   contactRow: {
     fontSize: theme.fontSize.sm,
-    color: theme.colors.muted,
     display: 'flex',
-    gap: '12px',
+    gap: '6px',
     flexWrap: 'wrap' as const,
+    marginTop: theme.spacing.sm,
+  },
+  contactBadge: {
+    backgroundColor: theme.colors.bg,
+    color: theme.colors.textSecondary,
+    padding: '1px 8px',
+    borderRadius: '10px',
+    border: `1px solid ${theme.colors.border}`,
   },
   section: {
     marginBottom: theme.spacing.md,
   },
   sectionTitle: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
     fontSize: theme.fontSize.md,
     fontWeight: '700',
     color: theme.colors.primary,
     textTransform: 'uppercase' as const,
     letterSpacing: '1.5px',
-    borderBottom: `${theme.borderWidth.sm} solid ${theme.colors.border}`,
-    paddingBottom: theme.spacing.xs,
     marginBottom: theme.spacing.sm,
+  },
+  sectionTitleBar: {
+    width: '3px',
+    height: '14px',
+    backgroundColor: theme.colors.primary,
+    borderRadius: '2px',
+    flexShrink: 0,
   },
   summary: {
     color: theme.colors.textSecondary,
     lineHeight: '1.6',
     fontSize: theme.fontSize.base,
+    paddingLeft: '11px',
+    borderLeft: `2px solid ${theme.colors.border}`,
   },
   summaryLine: {
     marginBottom: theme.spacing.xs,
   },
   expBlock: {
     marginBottom: theme.spacing.sm,
+    paddingLeft: theme.spacing.sm,
+    borderLeft: `2px solid ${theme.colors.border}`,
     ...theme.print.avoidBreak,
   },
   expHeader: {
@@ -163,17 +192,29 @@ const s = {
     marginBottom: theme.spacing.xs,
   },
   achievementLabel: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
     fontWeight: '600',
     fontSize: theme.fontSize.sm,
     color: theme.colors.text,
     marginTop: theme.spacing.xs,
     marginBottom: '2px',
   },
+  achievementDot: {
+    width: '6px',
+    height: '6px',
+    backgroundColor: theme.colors.accent,
+    borderRadius: '50%',
+    flexShrink: 0,
+  },
   eduRow: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'baseline',
     marginBottom: theme.spacing.sm,
+    paddingLeft: theme.spacing.sm,
+    borderLeft: `2px solid ${theme.colors.border}`,
   },
   eduSchool: {
     fontWeight: '600',
@@ -193,8 +234,6 @@ const s = {
     gap: '6px',
   },
   skillPill: {
-    backgroundColor: theme.colors.bgHighlight,
-    color: theme.colors.primary,
     padding: '2px 8px',
     borderRadius: theme.borderRadius.md,
     fontSize: theme.fontSize.sm,
@@ -204,6 +243,8 @@ const s = {
     marginBottom: theme.spacing.xs,
     fontSize: theme.fontSize.base,
     color: theme.colors.textSecondary,
+    paddingLeft: theme.spacing.sm,
+    borderLeft: `2px solid ${theme.colors.border}`,
   },
   projUrl: {
     fontSize: theme.fontSize.sm,
@@ -294,7 +335,10 @@ function ExperienceBlock({ exp, labels }: { exp: z.infer<typeof ExperienceSchema
       )}
       {exp.achievements && exp.achievements.length > 0 && (
         <>
-          <div style={s.achievementLabel}>{labels.keyAchievements}</div>
+          <div style={s.achievementLabel}>
+            <div style={s.achievementDot} />
+            <span>{labels.keyAchievements}</span>
+          </div>
           <BulletList items={exp.achievements} />
         </>
       )}
@@ -321,7 +365,10 @@ function ProjectBlock({ proj, labels }: { proj: z.infer<typeof ProjectSchema>; l
       )}
       {proj.achievements && proj.achievements.length > 0 && (
         <>
-          <div style={s.achievementLabel}>{labels.keyAchievements}</div>
+          <div style={s.achievementLabel}>
+            <div style={s.achievementDot} />
+            <span>{labels.keyAchievements}</span>
+          </div>
           <BulletList items={proj.achievements} />
         </>
       )}
@@ -354,19 +401,22 @@ export function ResumeTemplate({ data }: { data: ResumeData }) {
         {data.title && <div style={s.titleLine}>{data.title}</div>}
         {contact && (
           <div style={s.contactRow}>
-            {contact.location && <span>{contact.location}</span>}
-            {contact.email && <span>{contact.email}</span>}
-            {contact.phone && <span>{contact.phone}</span>}
-            {contact.github && <span>{contact.github}</span>}
-            {contact.linkedin && <span>{contact.linkedin}</span>}
-            {contact.website && <span>{contact.website}</span>}
+            {contact.location && <span style={s.contactBadge}>{contact.location}</span>}
+            {contact.email && <span style={s.contactBadge}>{contact.email}</span>}
+            {contact.phone && <span style={s.contactBadge}>{contact.phone}</span>}
+            {contact.github && <span style={s.contactBadge}>{contact.github}</span>}
+            {contact.linkedin && <span style={s.contactBadge}>{contact.linkedin}</span>}
+            {contact.website && <span style={s.contactBadge}>{contact.website}</span>}
           </div>
         )}
       </div>
 
       {data.summary && (
         <div style={s.section}>
-          <div style={s.sectionTitle}>{l.professionalSummary}</div>
+          <div style={s.sectionTitle}>
+            <div style={s.sectionTitleBar} />
+            <span>{l.professionalSummary}</span>
+          </div>
           <div style={s.summary}>
             {data.summary.split('\n').map((line, i) => (
               <div key={i} style={s.summaryLine}>{line || '\u00A0'}</div>
@@ -377,7 +427,10 @@ export function ResumeTemplate({ data }: { data: ResumeData }) {
 
       {projects.length > 0 && (
         <div style={s.section}>
-          <div style={s.sectionTitle}>{l.projects}</div>
+          <div style={s.sectionTitle}>
+            <div style={s.sectionTitleBar} />
+            <span>{l.projects}</span>
+          </div>
           {projects.map((proj, i) => (
             <ProjectBlock key={i} proj={proj} labels={l} />
           ))}
@@ -386,7 +439,10 @@ export function ResumeTemplate({ data }: { data: ResumeData }) {
 
       {experience.length > 0 && (
         <div style={s.section}>
-          <div style={s.sectionTitle}>{l.experience}</div>
+          <div style={s.sectionTitle}>
+            <div style={s.sectionTitleBar} />
+            <span>{l.experience}</span>
+          </div>
           {experience.map((exp, i) => (
             <ExperienceBlock key={i} exp={exp} labels={l} />
           ))}
@@ -395,7 +451,10 @@ export function ResumeTemplate({ data }: { data: ResumeData }) {
 
       {education.length > 0 && (
         <div style={s.section}>
-          <div style={s.sectionTitle}>{l.education}</div>
+          <div style={s.sectionTitle}>
+            <div style={s.sectionTitleBar} />
+            <span>{l.education}</span>
+          </div>
           {education.map((edu, i) => (
             <div key={i} style={s.eduRow}>
               <span>
@@ -412,10 +471,13 @@ export function ResumeTemplate({ data }: { data: ResumeData }) {
 
       {skills.length > 0 && (
         <div style={s.section}>
-          <div style={s.sectionTitle}>{l.skills}</div>
+          <div style={s.sectionTitle}>
+            <div style={s.sectionTitleBar} />
+            <span>{l.skills}</span>
+          </div>
           <div style={s.skillsWrap}>
             {skills.map((skill, i) => (
-              <span key={i} style={s.skillPill}>{skill}</span>
+              <span key={i} style={{ ...s.skillPill, backgroundColor: pillColors[i % pillColors.length].bg, color: pillColors[i % pillColors.length].text }}>{skill}</span>
             ))}
           </div>
         </div>
@@ -423,7 +485,10 @@ export function ResumeTemplate({ data }: { data: ResumeData }) {
 
       {data.certifications && data.certifications.length > 0 && (
         <div style={s.section}>
-          <div style={s.sectionTitle}>{l.certifications}</div>
+          <div style={s.sectionTitle}>
+            <div style={s.sectionTitleBar} />
+            <span>{l.certifications}</span>
+          </div>
           {data.certifications.map((cert, i) => (
             <div key={i} style={s.certLine}>
               <strong>{cert.name}</strong>
