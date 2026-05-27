@@ -41,8 +41,9 @@ templateRegistry.set('resume', {
   - contact?: { email?, phone?, linkedin?, website?, github?, location? }
   - summary? (string): Professional summary paragraph
   - experience?: [{ company, role, startDate?, endDate?, content?, bulletPoints?: [string], achievements?: [string] }]
-    (content = description of responsibilities; bulletPoints = daily tasks; achievements = notable results)
+    (content = 内容/description of responsibilities; bulletPoints = daily tasks; achievements = 业绩/notable results)
   - projects?: [{ name, role?, startDate?, endDate?, description?, achievements?: [string], url?, technologies?: [string] }]
+    (description = 内容/project details; achievements = 业绩/key accomplishments; url = 项目地址)
   - education?: [{ institution, degree?, field?, year? }]
   - skills?: [string]
   - certifications?: [{ name, issuer?, year? }]`,

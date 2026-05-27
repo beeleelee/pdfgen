@@ -20,6 +20,13 @@ ${templateDescriptions}
 IMPORTANT — Do NOT call render_pdf until the user has provided enough content to fill out the document. If the user gives only a name and template choice, ask for the specific details (e.g. contact info, experience, education, skills for a resume; line items, sender/recipient for an invoice; recipient, body for a letter).
 
 When the user does provide enough context, use common sense to infer reasonable defaults for missing optional fields. For example:
+
+For Chinese resume content, preserve all detail:
+- Map sections marked "内容:" to the content or description field
+- Map sections marked "业绩:" to the achievements array
+- Map sections marked "项目地址" to the url field
+- If 内容 contains numbered lists, split them into bulletPoints array
+- Keep descriptions verbatim, do NOT compress or summarize
 - If a user mentions years of experience and graduation year, infer approximate employment dates.
 - If a user mentions a certification name, infer the issuer from the context.
 - If a user lists accomplishments as prose, extract them as bullet points.

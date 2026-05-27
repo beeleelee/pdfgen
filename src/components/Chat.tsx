@@ -1,6 +1,6 @@
 import { useChat } from '@ai-sdk/react'
 import { DefaultChatTransport } from 'ai'
-import { useRef } from 'react'
+import { useRef, type KeyboardEvent } from 'react'
 
 interface ChatProps {
   fileContent: string | null
@@ -11,9 +11,16 @@ export function Chat({ fileContent }: ChatProps) {
     transport: new DefaultChatTransport({ api: '/api/chat' }),
   })
 
-  const inputRef = useRef<HTMLInputElement>(null)
+  const inputRef = useRef<HTMLTextAreaElement>(null)
   const fileContentRef = useRef(fileContent)
   fileContentRef.current = fileContent
+
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleSubmit(e)
+    }
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -101,12 +108,13 @@ export function Chat({ fileContent }: ChatProps) {
 
       <form onSubmit={handleSubmit} className="pt-4">
         <div className="flex gap-2">
-          <input
+          <textarea
             ref={inputRef}
-            type="text"
+            rows={3}
             placeholder="Describe the PDF you want to create..."
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
             disabled={status !== 'ready'}
+            onKeyDown={handleKeyDown}
           />
           <button
             type="submit"
