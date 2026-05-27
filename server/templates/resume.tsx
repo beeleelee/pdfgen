@@ -226,6 +226,29 @@ const s = {
   },
 }
 
+function getLabels(data: ResumeData) {
+  const isCn = /[\u4e00-\u9fff]/.test(data.name || data.summary || '')
+  return isCn
+    ? {
+        professionalSummary: '个人优势',
+        projects: '项目经历',
+        experience: '工作经历',
+        education: '教育经历',
+        skills: '技能',
+        certifications: '证书',
+        keyAchievements: '业绩',
+      }
+    : {
+        professionalSummary: 'Professional Summary',
+        projects: 'Projects',
+        experience: 'Experience',
+        education: 'Education',
+        skills: 'Skills',
+        certifications: 'Certifications',
+        keyAchievements: 'Key Achievements',
+      }
+}
+
 function BulletList({ items }: { items: string[] }) {
   return (
     <ul style={s.bulletList}>
@@ -245,7 +268,7 @@ function DateRange({ start, end }: { start?: string; end?: string | null }) {
   )
 }
 
-function ExperienceBlock({ exp }: { exp: z.infer<typeof ExperienceSchema> }) {
+function ExperienceBlock({ exp, labels }: { exp: z.infer<typeof ExperienceSchema>; labels: ReturnType<typeof getLabels> }) {
   return (
     <div style={s.expBlock}>
       <div style={s.expHeader}>
@@ -267,7 +290,7 @@ function ExperienceBlock({ exp }: { exp: z.infer<typeof ExperienceSchema> }) {
       )}
       {exp.achievements && exp.achievements.length > 0 && (
         <>
-          <div style={s.achievementLabel}>Key Achievements</div>
+          <div style={s.achievementLabel}>{labels.keyAchievements}</div>
           <BulletList items={exp.achievements} />
         </>
       )}
@@ -275,7 +298,7 @@ function ExperienceBlock({ exp }: { exp: z.infer<typeof ExperienceSchema> }) {
   )
 }
 
-function ProjectBlock({ proj }: { proj: z.infer<typeof ProjectSchema> }) {
+function ProjectBlock({ proj, labels }: { proj: z.infer<typeof ProjectSchema>; labels: ReturnType<typeof getLabels> }) {
   return (
     <div style={s.expBlock}>
       <div style={s.expHeader}>
@@ -297,7 +320,7 @@ function ProjectBlock({ proj }: { proj: z.infer<typeof ProjectSchema> }) {
       )}
       {proj.achievements && proj.achievements.length > 0 && (
         <>
-          <div style={s.achievementLabel}>Key Achievements</div>
+          <div style={s.achievementLabel}>{labels.keyAchievements}</div>
           <BulletList items={proj.achievements} />
         </>
       )}
@@ -318,6 +341,7 @@ export function ResumeTemplate({ data }: { data: ResumeData }) {
   const projects = data.projects || []
   const education = data.education || []
   const skills = data.skills || []
+  const l = getLabels(data)
 
   return (
     <div style={s.page}>
@@ -338,7 +362,7 @@ export function ResumeTemplate({ data }: { data: ResumeData }) {
 
       {data.summary && (
         <div style={s.section}>
-          <div style={s.sectionTitle}>Professional Summary</div>
+          <div style={s.sectionTitle}>{l.professionalSummary}</div>
           <div style={s.summary}>
             {data.summary.split('\n').map((line, i) => (
               <div key={i} style={s.summaryLine}>{line || '\u00A0'}</div>
@@ -349,25 +373,25 @@ export function ResumeTemplate({ data }: { data: ResumeData }) {
 
       {projects.length > 0 && (
         <div style={s.section}>
-          <div style={s.sectionTitle}>Projects</div>
+          <div style={s.sectionTitle}>{l.projects}</div>
           {projects.map((proj, i) => (
-            <ProjectBlock key={i} proj={proj} />
+            <ProjectBlock key={i} proj={proj} labels={l} />
           ))}
         </div>
       )}
 
       {experience.length > 0 && (
         <div style={s.section}>
-          <div style={s.sectionTitle}>Experience</div>
+          <div style={s.sectionTitle}>{l.experience}</div>
           {experience.map((exp, i) => (
-            <ExperienceBlock key={i} exp={exp} />
+            <ExperienceBlock key={i} exp={exp} labels={l} />
           ))}
         </div>
       )}
 
       {education.length > 0 && (
         <div style={s.section}>
-          <div style={s.sectionTitle}>Education</div>
+          <div style={s.sectionTitle}>{l.education}</div>
           {education.map((edu, i) => (
             <div key={i} style={s.eduRow}>
               <span>
@@ -384,7 +408,7 @@ export function ResumeTemplate({ data }: { data: ResumeData }) {
 
       {skills.length > 0 && (
         <div style={s.section}>
-          <div style={s.sectionTitle}>Skills</div>
+          <div style={s.sectionTitle}>{l.skills}</div>
           <div style={s.skillsWrap}>
             {skills.map((skill, i) => (
               <span key={i} style={s.skillPill}>{skill}</span>
@@ -395,7 +419,7 @@ export function ResumeTemplate({ data }: { data: ResumeData }) {
 
       {data.certifications && data.certifications.length > 0 && (
         <div style={s.section}>
-          <div style={s.sectionTitle}>Certifications</div>
+          <div style={s.sectionTitle}>{l.certifications}</div>
           {data.certifications.map((cert, i) => (
             <div key={i} style={s.certLine}>
               <strong>{cert.name}</strong>
