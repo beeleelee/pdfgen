@@ -6,6 +6,7 @@ import { chromium } from 'playwright'
 import { v4 as uuid } from 'uuid'
 import chatRouter from './routes/chat.js'
 import pdfRouter from './routes/pdf.js'
+import renderTestRouter from './routes/render-test.js'
 import { storePdf } from './pdf/generator.js'
 
 const app = express()
@@ -15,6 +16,7 @@ app.use(express.json())
 
 app.use('/api/chat', chatRouter)
 app.use('/api/pdf', pdfRouter)
+app.use('/api/render-test', renderTestRouter)
 
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok' })

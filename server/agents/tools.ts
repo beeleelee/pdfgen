@@ -8,7 +8,7 @@ import { generatePdf, storePdf, startCleanup } from '../pdf/generator.js'
 
 startCleanup()
 
-function preprocessData(data: Record<string, unknown>): Record<string, unknown> {
+export function preprocessData(data: Record<string, unknown>): Record<string, unknown> {
   const result = { ...data }
 
   if (typeof result.sender === 'string') {
@@ -45,7 +45,7 @@ function preprocessData(data: Record<string, unknown>): Record<string, unknown> 
   return result
 }
 
-function wrapHtml(content: string, watermark?: string): string {
+export function wrapHtml(content: string, watermark?: string): string {
   const watermarkCss = watermark
     ? `.wm-overlay {
   position: fixed;
@@ -111,6 +111,7 @@ export const tools = {
       console.log(
         `[render_pdf] execute called: template="${template}", watermark="${watermark || '(none)'}"`
       )
+      console.log('[render_pdf] raw data:', JSON.stringify(data, null, 2))
       const entry = templateRegistry.get(template)
       if (!entry) {
         console.error(`[render_pdf] Unknown template: ${template}`)
