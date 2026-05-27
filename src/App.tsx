@@ -1,23 +1,23 @@
 import { useState } from 'react'
 import { Chat } from './components/Chat'
 import { FileUpload } from './components/FileUpload'
-import { PdfPreview } from './components/PdfPreview'
-import { Controls } from './components/Controls'
 
 export default function App() {
-  const [pdfUrl, setPdfUrl] = useState<string | null>(null)
   const [fileContent, setFileContent] = useState<string | null>(null)
 
   return (
-    <div className="flex h-screen bg-gray-50">
-      <div className="w-1/2 flex flex-col border-r border-gray-200">
-        <FileUpload onFileContent={setFileContent} />
-        <Chat onPdfUrl={setPdfUrl} fileContent={fileContent} />
-      </div>
-      <div className="w-1/2 flex flex-col">
-        <Controls pdfUrl={pdfUrl} onClear={() => setPdfUrl(null)} />
-        <PdfPreview pdfUrl={pdfUrl} />
-      </div>
+    <div className="flex flex-col h-screen bg-gray-50">
+      <header className="border-b border-gray-200 bg-white">
+        <div className="max-w-3xl mx-auto px-4 h-12 flex items-center justify-between">
+          <span className="font-semibold text-gray-800">pdfgen</span>
+          <FileUpload onFileContent={setFileContent} />
+        </div>
+      </header>
+      <main className="flex-1 min-h-0">
+        <div className="h-full max-w-3xl mx-auto px-4 py-4">
+          <Chat fileContent={fileContent} />
+        </div>
+      </main>
     </div>
   )
 }

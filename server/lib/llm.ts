@@ -12,7 +12,8 @@ export function getModel(): LanguageModel {
 
   const openai = createOpenAI({
     apiKey: process.env.OPENAI_API_KEY,
+    baseURL: process.env.OPENAI_BASE_URL,
   })
   const model = process.env.OPENAI_MODEL || 'gpt-4o'
-  return openai(model) as unknown as LanguageModel
+  return openai.chat(model) as unknown as LanguageModel
 }
