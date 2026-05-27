@@ -41,7 +41,7 @@ export function Chat({ fileContent }: ChatProps) {
     : ''
 
   return (
-    <div className="flex-1 flex flex-col min-h-[300px]">
+    <div className="flex-1 flex flex-col min-h-0">
       {messages.length === 0 ? (
         <div className="flex-1 flex items-center justify-center">
           <p className="text-gray-400 text-sm">
