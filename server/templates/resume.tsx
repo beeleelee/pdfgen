@@ -120,6 +120,7 @@ const s = {
     color: theme.colors.textSecondary,
     lineHeight: '1.6',
     fontSize: theme.fontSize.base,
+    whiteSpace: 'pre-wrap' as const,
   },
   expBlock: {
     marginBottom: theme.spacing.lg,
@@ -149,6 +150,7 @@ const s = {
     color: theme.colors.textSecondary,
     marginBottom: theme.spacing.sm,
     lineHeight: '1.6',
+    whiteSpace: 'pre-wrap' as const,
   },
   bulletList: {
     margin: '4px 0 0 0',
