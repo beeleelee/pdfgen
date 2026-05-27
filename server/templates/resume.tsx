@@ -73,37 +73,37 @@ const s = {
     fontFamily: theme.fonts.sans,
     maxWidth: '800px',
     margin: '0 auto',
-    padding: '40px',
+    padding: '24px',
     color: theme.colors.text,
     fontSize: theme.fontSize.base,
     lineHeight: '1.5',
   },
   header: {
     borderBottom: `${theme.borderWidth.md} solid ${theme.colors.primary}`,
-    paddingBottom: theme.spacing.xl,
-    marginBottom: theme.spacing.section,
+    paddingBottom: theme.spacing.lg,
+    marginBottom: theme.spacing.lg,
   },
   name: {
-    fontSize: theme.fontSize.xxl,
+    fontSize: theme.fontSize.xl,
     fontWeight: '700',
     color: theme.colors.primary,
-    margin: '0 0 4px 0',
+    margin: '0',
     letterSpacing: '1px',
   },
   titleLine: {
     fontSize: theme.fontSize.lg,
     color: theme.colors.textSecondary,
-    marginBottom: theme.spacing.sm,
+    marginBottom: theme.spacing.xs,
   },
   contactRow: {
     fontSize: theme.fontSize.sm,
     color: theme.colors.muted,
     display: 'flex',
-    gap: '16px',
+    gap: '12px',
     flexWrap: 'wrap' as const,
   },
   section: {
-    marginBottom: theme.spacing.xl,
+    marginBottom: theme.spacing.md,
   },
   sectionTitle: {
     fontSize: theme.fontSize.md,
@@ -113,7 +113,7 @@ const s = {
     letterSpacing: '1.5px',
     borderBottom: `${theme.borderWidth.sm} solid ${theme.colors.border}`,
     paddingBottom: theme.spacing.xs,
-    marginBottom: theme.spacing.md,
+    marginBottom: theme.spacing.sm,
   },
   summary: {
     color: theme.colors.textSecondary,
@@ -124,7 +124,7 @@ const s = {
     marginBottom: theme.spacing.xs,
   },
   expBlock: {
-    marginBottom: theme.spacing.lg,
+    marginBottom: theme.spacing.sm,
     ...theme.print.avoidBreak,
   },
   expHeader: {
@@ -156,7 +156,7 @@ const s = {
   },
   bulletList: {
     margin: '4px 0 0 0',
-    paddingLeft: '18px',
+    paddingLeft: '14px',
     color: theme.colors.textSecondary,
   },
   bullet: {
@@ -166,8 +166,8 @@ const s = {
     fontWeight: '600',
     fontSize: theme.fontSize.sm,
     color: theme.colors.text,
-    marginTop: theme.spacing.sm,
-    marginBottom: theme.spacing.xs,
+    marginTop: theme.spacing.xs,
+    marginBottom: '2px',
   },
   eduRow: {
     display: 'flex',
@@ -195,7 +195,7 @@ const s = {
   skillPill: {
     backgroundColor: theme.colors.bgHighlight,
     color: theme.colors.primary,
-    padding: '3px 10px',
+    padding: '2px 8px',
     borderRadius: theme.borderRadius.md,
     fontSize: theme.fontSize.sm,
     fontWeight: '500',
@@ -237,6 +237,8 @@ function getLabels(data: ResumeData) {
         skills: '技能',
         certifications: '证书',
         keyAchievements: '业绩',
+        present: '至今',
+        at: ' · ',
       }
     : {
         professionalSummary: 'Professional Summary',
@@ -246,6 +248,8 @@ function getLabels(data: ResumeData) {
         skills: 'Skills',
         certifications: 'Certifications',
         keyAchievements: 'Key Achievements',
+        present: 'Present',
+        at: ' at ',
       }
 }
 
@@ -259,11 +263,11 @@ function BulletList({ items }: { items: string[] }) {
   )
 }
 
-function DateRange({ start, end }: { start?: string; end?: string | null }) {
+function DateRange({ start, end, present }: { start?: string; end?: string | null; present: string }) {
   if (!start) return null
   return (
     <span style={s.expDates}>
-      {start} — {end || 'Present'}
+      {start} — {end || present}
     </span>
   )
 }
@@ -274,9 +278,9 @@ function ExperienceBlock({ exp, labels }: { exp: z.infer<typeof ExperienceSchema
       <div style={s.expHeader}>
         <span style={s.expRole}>
           <span>{exp.role}</span>
-          {exp.company && <span style={s.expCompany}> at {exp.company}</span>}
+          {exp.company && <span style={s.expCompany}>{labels.at}{exp.company}</span>}
         </span>
-        <DateRange start={exp.startDate} end={exp.endDate} />
+        <DateRange start={exp.startDate} end={exp.endDate} present={labels.present} />
       </div>
       {exp.content && (
         <div style={s.contentText}>
@@ -306,7 +310,7 @@ function ProjectBlock({ proj, labels }: { proj: z.infer<typeof ProjectSchema>; l
           <span>{proj.name}</span>
           {proj.role && <span style={s.expCompany}> — {proj.role}</span>}
         </span>
-        <DateRange start={proj.startDate} end={proj.endDate} />
+        <DateRange start={proj.startDate} end={proj.endDate} present={labels.present} />
       </div>
       {proj.description && (
         <div style={s.contentText}>
