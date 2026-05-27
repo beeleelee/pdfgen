@@ -104,7 +104,6 @@ const s = {
   },
   section: {
     marginBottom: theme.spacing.xl,
-    ...theme.print.avoidBreak,
   },
   sectionTitle: {
     fontSize: theme.fontSize.md,
@@ -329,20 +328,20 @@ export function ResumeTemplate({ data }: { data: ResumeData }) {
         </div>
       )}
 
-      {experience.length > 0 && (
-        <div style={s.section}>
-          <div style={s.sectionTitle}>Experience</div>
-          {experience.map((exp, i) => (
-            <ExperienceBlock key={i} exp={exp} />
-          ))}
-        </div>
-      )}
-
       {projects.length > 0 && (
         <div style={s.section}>
           <div style={s.sectionTitle}>Projects</div>
           {projects.map((proj, i) => (
             <ProjectBlock key={i} proj={proj} />
+          ))}
+        </div>
+      )}
+
+      {experience.length > 0 && (
+        <div style={s.section}>
+          <div style={s.sectionTitle}>Experience</div>
+          {experience.map((exp, i) => (
+            <ExperienceBlock key={i} exp={exp} />
           ))}
         </div>
       )}
