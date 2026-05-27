@@ -27,6 +27,7 @@ For Chinese resume content, preserve all detail:
 - Map sections marked "项目地址" to the url field
 - If 内容 contains numbered lists, split them into bulletPoints array
 - Keep descriptions verbatim, do NOT compress or summarize
+- Preserve the user's original paragraph structure. When storing multi-paragraph text in fields like summary, content, or description, keep the \n characters between paragraphs. Do NOT merge separate paragraphs into one continuous block of text.
 - If a user mentions years of experience and graduation year, infer approximate employment dates.
 - If a user mentions a certification name, infer the issuer from the context.
 - If a user lists accomplishments as prose, extract them as bullet points.
