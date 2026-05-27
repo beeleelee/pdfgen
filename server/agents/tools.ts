@@ -35,6 +35,9 @@ function preprocessData(data: Record<string, unknown>): Record<string, unknown> 
   if (typeof result.certifications === 'string') {
     result.certifications = [{ name: result.certifications }]
   }
+  if (typeof result.projects === 'string') {
+    result.projects = [{ name: result.projects }]
+  }
   if (typeof result.signature === 'string' && !result.sender) {
     result.sender = { name: result.signature }
   }

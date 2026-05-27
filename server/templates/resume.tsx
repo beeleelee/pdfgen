@@ -7,10 +7,15 @@ export const ExperienceSchema = z.object({
   role: z.string().describe('Job title'),
   startDate: z.string().optional().describe('Start date (e.g. Jan 2020)'),
   endDate: z.coerce.string().nullable().optional().describe('End date (e.g. Dec 2023, or "Present")'),
+  content: z.string().optional().describe('Description of responsibilities and context'),
   bulletPoints: z
     .array(z.string())
     .optional()
-    .describe('Key accomplishments and responsibilities'),
+    .describe('Key responsibilities and daily tasks'),
+  achievements: z
+    .array(z.string())
+    .optional()
+    .describe('Notable accomplishments and results'),
 })
 
 export const EducationSchema = z.object({
@@ -18,6 +23,20 @@ export const EducationSchema = z.object({
   degree: z.string().optional().describe('Degree type (e.g. B.S., M.S.)'),
   field: z.string().optional().describe('Field of study'),
   year: z.coerce.string().optional().describe('Graduation year'),
+})
+
+export const ProjectSchema = z.object({
+  name: z.string().describe('Project name'),
+  role: z.string().optional().describe('Your role on the project'),
+  startDate: z.string().optional().describe('Start date (e.g. Jan 2020)'),
+  endDate: z.coerce.string().nullable().optional().describe('End date (e.g. Dec 2023, or "Present")'),
+  description: z.string().optional().describe('Project description and context'),
+  achievements: z
+    .array(z.string())
+    .optional()
+    .describe('Key accomplishments and results'),
+  url: z.string().optional().describe('Project URL (e.g. GitHub)'),
+  technologies: z.array(z.string()).optional().describe('Technologies used'),
 })
 
 export const ResumeDataSchema = z.object({
@@ -28,9 +47,12 @@ export const ResumeDataSchema = z.object({
     phone: z.string().optional(),
     linkedin: z.string().optional(),
     website: z.string().optional(),
+    github: z.string().optional(),
+    location: z.string().optional(),
   }).optional(),
   summary: z.string().optional().describe('Professional summary paragraph'),
   experience: z.array(ExperienceSchema).optional(),
+  projects: z.array(ProjectSchema).optional(),
   education: z.array(EducationSchema).optional(),
   skills: z.array(z.string()).optional(),
   certifications: z
@@ -123,12 +145,24 @@ const s = {
     color: theme.colors.muted,
     whiteSpace: 'nowrap' as const,
   },
+  contentText: {
+    color: theme.colors.textSecondary,
+    marginBottom: theme.spacing.sm,
+    lineHeight: '1.6',
+  },
   bulletList: {
     margin: '4px 0 0 0',
     paddingLeft: '18px',
     color: theme.colors.textSecondary,
   },
   bullet: {
+    marginBottom: theme.spacing.xs,
+  },
+  achievementLabel: {
+    fontWeight: '600',
+    fontSize: theme.fontSize.sm,
+    color: theme.colors.text,
+    marginTop: theme.spacing.sm,
     marginBottom: theme.spacing.xs,
   },
   eduRow: {
@@ -167,11 +201,105 @@ const s = {
     fontSize: theme.fontSize.base,
     color: theme.colors.textSecondary,
   },
+  projUrl: {
+    fontSize: theme.fontSize.sm,
+    color: theme.colors.accent,
+    marginBottom: theme.spacing.xs,
+  },
+  techWrap: {
+    display: 'flex',
+    flexWrap: 'wrap' as const,
+    gap: '4px',
+    marginTop: theme.spacing.xs,
+  },
+  techPill: {
+    backgroundColor: theme.colors.bgMuted,
+    color: theme.colors.textSecondary,
+    padding: '2px 7px',
+    borderRadius: theme.borderRadius.sm,
+    fontSize: theme.fontSize.xs,
+    fontWeight: '500',
+  },
+}
+
+function BulletList({ items }: { items: string[] }) {
+  return (
+    <ul style={s.bulletList}>
+      {items.map((item, i) => (
+        <li key={i} style={s.bullet}>{item}</li>
+      ))}
+    </ul>
+  )
+}
+
+function DateRange({ start, end }: { start?: string; end?: string | null }) {
+  if (!start) return null
+  return (
+    <span style={s.expDates}>
+      {start} — {end || 'Present'}
+    </span>
+  )
+}
+
+function ExperienceBlock({ exp }: { exp: z.infer<typeof ExperienceSchema> }) {
+  return (
+    <div style={s.expBlock}>
+      <div style={s.expHeader}>
+        <span style={s.expRole}>
+          <span>{exp.role}</span>
+          {exp.company && <span style={s.expCompany}> at {exp.company}</span>}
+        </span>
+        <DateRange start={exp.startDate} end={exp.endDate} />
+      </div>
+      {exp.content && <div style={s.contentText}>{exp.content}</div>}
+      {exp.bulletPoints && exp.bulletPoints.length > 0 && (
+        <BulletList items={exp.bulletPoints} />
+      )}
+      {exp.achievements && exp.achievements.length > 0 && (
+        <>
+          <div style={s.achievementLabel}>Key Achievements</div>
+          <BulletList items={exp.achievements} />
+        </>
+      )}
+    </div>
+  )
+}
+
+function ProjectBlock({ proj }: { proj: z.infer<typeof ProjectSchema> }) {
+  return (
+    <div style={s.expBlock}>
+      <div style={s.expHeader}>
+        <span style={s.expRole}>
+          <span>{proj.name}</span>
+          {proj.role && <span style={s.expCompany}> — {proj.role}</span>}
+        </span>
+        <DateRange start={proj.startDate} end={proj.endDate} />
+      </div>
+      {proj.description && <div style={s.contentText}>{proj.description}</div>}
+      {proj.url && (
+        <div style={s.projUrl}>{proj.url}</div>
+      )}
+      {proj.achievements && proj.achievements.length > 0 && (
+        <>
+          <div style={s.achievementLabel}>Key Achievements</div>
+          <BulletList items={proj.achievements} />
+        </>
+      )}
+      {proj.technologies && proj.technologies.length > 0 && (
+        <div style={s.techWrap}>
+          {proj.technologies.map((t, i) => (
+            <span key={i} style={s.techPill}>{t}</span>
+          ))}
+        </div>
+      )}
+    </div>
+  )
 }
 
 export function ResumeTemplate({ data }: { data: ResumeData }) {
   const contact = data.contact
   const experience = data.experience || []
+  const projects = data.projects || []
   const education = data.education || []
   const skills = data.skills || []
 
@@ -182,8 +310,10 @@ export function ResumeTemplate({ data }: { data: ResumeData }) {
         {data.title && <div style={s.titleLine}>{data.title}</div>}
         {contact && (
           <div style={s.contactRow}>
+            {contact.location && <span>{contact.location}</span>}
             {contact.email && <span>{contact.email}</span>}
             {contact.phone && <span>{contact.phone}</span>}
+            {contact.github && <span>{contact.github}</span>}
             {contact.linkedin && <span>{contact.linkedin}</span>}
             {contact.website && <span>{contact.website}</span>}
           </div>
@@ -201,26 +331,16 @@ export function ResumeTemplate({ data }: { data: ResumeData }) {
         <div style={s.section}>
           <div style={s.sectionTitle}>Experience</div>
           {experience.map((exp, i) => (
-            <div key={i} style={s.expBlock}>
-              <div style={s.expHeader}>
-                <span style={s.expRole}>
-                  <span>{exp.role}</span>
-                  {exp.company && <span style={s.expCompany}> at {exp.company}</span>}
-                </span>
-                {exp.startDate && (
-                  <span style={s.expDates}>
-                    {exp.startDate} — {exp.endDate || 'Present'}
-                  </span>
-                )}
-              </div>
-              {exp.bulletPoints && exp.bulletPoints.length > 0 && (
-                <ul style={s.bulletList}>
-                  {exp.bulletPoints.map((bp, j) => (
-                    <li key={j} style={s.bullet}>{bp}</li>
-                  ))}
-                </ul>
-              )}
-            </div>
+            <ExperienceBlock key={i} exp={exp} />
+          ))}
+        </div>
+      )}
+
+      {projects.length > 0 && (
+        <div style={s.section}>
+          <div style={s.sectionTitle}>Projects</div>
+          {projects.map((proj, i) => (
+            <ProjectBlock key={i} proj={proj} />
           ))}
         </div>
       )}

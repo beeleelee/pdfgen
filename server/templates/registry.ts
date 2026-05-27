@@ -34,13 +34,15 @@ templateRegistry.set('invoice', {
 templateRegistry.set('resume', {
   component: ResumeTemplate as React.FC<{ data: any }>,
   schema: ResumeDataSchema,
-  description: 'Resume/CV template for creating professional resumes with experience, education, and skills',
+  description: 'Resume/CV template for creating professional resumes with experience, education, skills, and projects',
   dataDescription: `Fields:
-  - name (string, REQUIRED): Full name of the person (extract from user's message)
+  - name (string, REQUIRED): Full name of the person
   - title? (string): Professional headline
-  - contact?: { email?, phone?, linkedin?, website? }
+  - contact?: { email?, phone?, linkedin?, website?, github?, location? }
   - summary? (string): Professional summary paragraph
-  - experience?: [{ company, role, startDate?, endDate?, bulletPoints?: [string] }]
+  - experience?: [{ company, role, startDate?, endDate?, content?, bulletPoints?: [string], achievements?: [string] }]
+    (content = description of responsibilities; bulletPoints = daily tasks; achievements = notable results)
+  - projects?: [{ name, role?, startDate?, endDate?, description?, achievements?: [string], url?, technologies?: [string] }]
   - education?: [{ institution, degree?, field?, year? }]
   - skills?: [string]
   - certifications?: [{ name, issuer?, year? }]`,
