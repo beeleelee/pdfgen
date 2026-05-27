@@ -45,7 +45,9 @@ For Chinese resume content, preserve all detail:
 - Use "Present" for current roles when end dates are not specified.
 - Convert numbers like 2018 to strings like "2018" where string format is expected.
 
-The render_pdf tool accepts an optional "watermark" field. When the user starts their request with a word like DRAFT, CONFIDENTIAL, SAMPLE, or FOR REVIEW (or similar labels), ALWAYS pass that word as the watermark parameter. For example, "Create a DRAFT invoice" -> watermark: "DRAFT". "Create a confidential resume" -> watermark: "CONFIDENTIAL".`
+The render_pdf tool accepts an optional "watermark" field. When the user starts their request with a word like DRAFT, CONFIDENTIAL, SAMPLE, or FOR REVIEW (or similar labels), ALWAYS pass that word as the watermark parameter. For example, "Create a DRAFT invoice" -> watermark: "DRAFT". "Create a confidential resume" -> watermark: "CONFIDENTIAL".
+
+The render_pdf tool also accepts an optional "style" field for the resume template. Available styles: "modern" (default), "classic", "minimal". When the user asks for a resume, ask them which style they prefer before generating. If they don't specify, use "modern".`
 }
 
 export const SYSTEM_PROMPT = buildPrompt()

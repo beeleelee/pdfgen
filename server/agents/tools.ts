@@ -127,6 +127,12 @@ export const tools = {
     inputSchema: z.object({
       template: z.enum(['invoice', 'resume', 'letter']),
       data: z.record(z.unknown()),
+      style: z
+        .string()
+        .optional()
+        .describe(
+          'Style variant for the template. For resume: "modern" (default), "classic", or "minimal". Ask the user which style they prefer before generating.'
+        ),
       watermark: z
         .string()
         .optional()
@@ -137,14 +143,16 @@ export const tools = {
     execute: async ({
       template,
       data,
+      style,
       watermark,
     }: {
       template: string
       data: Record<string, unknown>
+      style?: string
       watermark?: string
     }) => {
       console.log(
-        `[render_pdf] execute called: template="${template}", watermark="${watermark || '(none)'}"`
+        `[render_pdf] execute called: template="${template}", style="${style || 'default'}", watermark="${watermark || '(none)'}"`
       )
       console.log('[render_pdf] raw data:', JSON.stringify(data, null, 2))
 
@@ -166,21 +174,26 @@ export const tools = {
         return { error: `Invalid data: ${parsed.error.message}` }
       }
 
-      // Step 3: Render the React template component to static HTML markup
+      // Step 3: Resolve the component — use style variant if specified and available,
+      // otherwise fall back to the default component
+      const component =
+        (style && entry.styles?.[style]) || entry.component
+
+      // Step 4: Render the React template component to static HTML markup
       let html: string
       try {
         html = renderToStaticMarkup(
-          React.createElement(entry.component, { data: parsed.data })
+          React.createElement(component, { data: parsed.data })
         )
       } catch (err) {
         console.error('[render_pdf] React render error:', err)
         return { error: `Failed to render template: ${err}` }
       }
 
-      // Step 4: Wrap in a full HTML document (head, fonts, optional watermark)
+      // Step 5: Wrap in a full HTML document (head, fonts, optional watermark)
       const fullHtml = wrapHtml(html, watermark)
 
-      // Step 5: Generate the PDF via Playwright Chromium
+      // Step 6: Generate the PDF via Playwright Chromium
       let pdfBuffer: Buffer
       try {
         pdfBuffer = await generatePdf(fullHtml)
@@ -189,11 +202,12 @@ export const tools = {
         return { error: `Failed to generate PDF: ${err}` }
       }
 
-      // Step 6: Store the PDF buffer in memory and return the ID
+      // Step 7: Store the PDF buffer in memory and return the ID
       const pdfId = uuid()
       storePdf(pdfId, pdfBuffer)
       console.log(
         `[render_pdf] Generated ${template} PDF: ${pdfId}` +
+          (style ? ` (style: ${style})` : '') +
           (watermark ? ` (watermark: "${watermark}")` : '')
       )
 

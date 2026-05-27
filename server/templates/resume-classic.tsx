@@ -1,6 +1,5 @@
-// Module: server/templates/resume.tsx — Modern resume style (default).
-// Features: dark gradient header, blue timeline border on experience blocks,
-// colored skill pills, subtle dot-grid background.
+// Module: server/templates/resume-classic.tsx — Classic resume style.
+// Features: serif font, centered header, bordered section boxes, traditional paper-like layout.
 
 import React from 'react'
 import { z } from 'zod'
@@ -15,112 +14,73 @@ import {
   type Labels,
 } from './resume-shared.js'
 
-// Cycling palette for skill pills — each skill gets the next color
-const pillColors = [
-  { border: '#3b82f6', text: '#3b82f6' },
-  { border: '#06b6d4', text: '#06b6d4' },
-  { border: '#8b5cf6', text: '#8b5cf6' },
-  { border: '#10b981', text: '#10b981' },
-  { border: '#f59e0b', text: '#f59e0b' },
-]
+export { ResumeDataSchema }
 
-// ─── Inline style definitions ─────────────────────────────────
-// Centralized style object for the resume template. Organized by section
-// to make the component JSX cleaner and facilitate reuse.
+// ─── Style definitions ───────────────────────────────────────
 const s = {
-  // Page-level container with subtle dot-grid background
   page: {
-    fontFamily: theme.fonts.sans,
+    fontFamily: theme.fonts.serif,
     maxWidth: '800px',
     margin: '0 auto',
-    padding: '24px',
+    padding: '48px',
     color: theme.colors.text,
     fontSize: theme.fontSize.base,
-    lineHeight: '1.5',
-    backgroundImage: 'radial-gradient(circle, rgba(148,163,184,0.06) 0.5px, transparent 0.5px)',
-    backgroundSize: '20px 20px',
+    lineHeight: '1.6',
   },
-  // Header with dark gradient background and white text
   header: {
-    background: theme.gradients.header,
-    borderRadius: theme.borderRadius.md,
-    padding: theme.spacing.lg + ' ' + theme.spacing.xl,
-    marginBottom: theme.spacing.lg,
-  },
-  headerAccent: {
-    width: '40px',
-    height: '2px',
-    background: theme.gradients.accentUnderline,
-    borderRadius: '1px',
-    marginTop: theme.spacing.sm,
-  },
-  nameRow: {
-    display: 'flex',
-    alignItems: 'baseline',
-    gap: '12px',
+    textAlign: 'center' as const,
+    marginBottom: theme.spacing.section,
+    paddingBottom: theme.spacing.lg,
+    borderBottom: `1px solid ${theme.colors.border}`,
   },
   name: {
-    fontSize: theme.fontSize.xl,
+    fontSize: theme.fontSize.xxl,
     fontWeight: '700',
-    color: '#ffffff',
-    margin: '0',
-    letterSpacing: '1px',
+    color: theme.colors.primaryDark,
+    margin: '0 0 4px 0',
+    letterSpacing: '0.5px',
   },
   titleLine: {
     fontSize: theme.fontSize.lg,
-    color: '#cbd5e1',
+    color: theme.colors.textSecondary,
+    fontStyle: 'italic' as const,
   },
   contactRow: {
     fontSize: theme.fontSize.sm,
-    color: 'rgba(255,255,255,0.6)',
+    color: theme.colors.muted,
     marginTop: theme.spacing.sm,
   },
-  // Section container with bottom margin
-  section: {
-    marginBottom: theme.spacing.md,
+  sectionBox: {
+    marginBottom: theme.spacing.lg,
+    border: `1px solid ${theme.colors.border}`,
+    borderRadius: theme.borderRadius.md,
+    backgroundColor: theme.colors.bgMuted,
+    padding: theme.spacing.lg,
+    ...theme.print.avoidBreak,
   },
-  // Section title with uppercase label and colored underline
   sectionTitle: {
-    display: 'flex',
-    flexDirection: 'column' as const,
-    gap: '2px',
     fontSize: theme.fontSize.md,
     fontWeight: '700',
     color: theme.colors.primaryDark,
     textTransform: 'uppercase' as const,
     letterSpacing: '1.5px',
     marginBottom: theme.spacing.sm,
-  },
-  sectionTitleUnderline: {
-    width: '30px',
-    height: '2px',
-    background: theme.gradients.accentUnderline,
-    borderRadius: '1px',
+    paddingBottom: theme.spacing.xs,
+    borderBottom: `1px solid ${theme.colors.border}`,
   },
   paragraph: {
     marginBottom: theme.spacing.xs,
   },
   summary: {
     color: theme.colors.textSecondary,
-    lineHeight: '1.6',
-    fontSize: theme.fontSize.base,
+    lineHeight: '1.7',
+    fontStyle: 'italic' as const,
   },
-  // Experience/project block with left blue border timeline style
   expBlock: {
-    position: 'relative' as const,
-    marginBottom: theme.spacing.sm,
-    paddingLeft: '16px',
-    borderLeft: '2px solid #3b82f6',
+    marginBottom: theme.spacing.md,
+    paddingBottom: theme.spacing.md,
+    borderBottom: `1px solid ${theme.colors.border}`,
     ...theme.print.avoidBreak,
-  },
-  timelineDot: {
-    position: 'absolute' as const,
-    left: '-5px',
-    top: '4px',
-    width: '8px',
-    height: '8px',
-    borderRadius: '50%',
-    backgroundColor: '#3b82f6',
   },
   expHeader: {
     display: 'flex',
@@ -136,6 +96,7 @@ const s = {
   expCompany: {
     fontWeight: '400',
     color: theme.colors.textSecondary,
+    fontStyle: 'italic' as const,
   },
   expDates: {
     fontSize: theme.fontSize.sm,
@@ -148,41 +109,24 @@ const s = {
   },
   bulletList: {
     margin: '4px 0 0 0',
-    paddingLeft: '14px',
+    paddingLeft: '18px',
     color: theme.colors.textSecondary,
   },
   bullet: {
     marginBottom: theme.spacing.xs,
   },
-  // "Key Achievements" / 业绩 label with cyan accent
   achievementLabel: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '6px',
     fontWeight: '600',
     fontSize: theme.fontSize.sm,
-    color: theme.colors.accentTech,
-    backgroundColor: 'rgba(6,182,212,0.08)',
-    padding: '2px 8px',
-    borderRadius: '4px',
+    color: theme.colors.accent,
     marginTop: theme.spacing.xs,
     marginBottom: '2px',
   },
-  achievementDot: {
-    width: '6px',
-    height: '6px',
-    backgroundColor: theme.colors.accentTech,
-    borderRadius: '50%',
-    flexShrink: 0,
-  },
-  // Education row with left border
   eduRow: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'baseline',
     marginBottom: theme.spacing.sm,
-    paddingLeft: '16px',
-    borderLeft: '2px solid #3b82f6',
   },
   eduSchool: {
     fontWeight: '600',
@@ -200,22 +144,21 @@ const s = {
     display: 'flex',
     flexWrap: 'wrap' as const,
     gap: '6px',
+    marginTop: theme.spacing.xs,
   },
   skillPill: {
-    padding: '2px 8px',
-    borderRadius: theme.borderRadius.md,
+    backgroundColor: theme.colors.bgHighlight,
+    color: theme.colors.primary,
+    padding: '3px 10px',
+    borderRadius: theme.borderRadius.sm,
     fontSize: theme.fontSize.sm,
     fontWeight: '500',
-    borderWidth: '1px',
-    borderStyle: 'solid' as const,
-    backgroundColor: 'transparent',
+    border: `1px solid ${theme.colors.primaryLight}`,
   },
   certLine: {
     marginBottom: theme.spacing.xs,
     fontSize: theme.fontSize.base,
     color: theme.colors.textSecondary,
-    paddingLeft: '16px',
-    borderLeft: '2px solid #3b82f6',
   },
   projUrl: {
     fontSize: theme.fontSize.sm,
@@ -238,7 +181,8 @@ const s = {
   },
 }
 
-/** Renders an unordered list of bullet points. */
+// ─── Sub-components ──────────────────────────────────────────
+
 function BulletList({ items }: { items: string[] }) {
   return (
     <ul style={s.bulletList}>
@@ -249,7 +193,6 @@ function BulletList({ items }: { items: string[] }) {
   )
 }
 
-/** Formats a date range (e.g. "Jan 2020 — Present"). Returns null if no start date. */
 function DateRange({ start, end, present }: { start?: string; end?: string | null; present: string }) {
   if (!start) return null
   return (
@@ -259,22 +202,19 @@ function DateRange({ start, end, present }: { start?: string; end?: string | nul
   )
 }
 
-/** Single experience entry with timeline style, content paragraphs, bullet points, and achievements. */
 function ExperienceBlock({ exp, labels }: { exp: z.infer<typeof ExperienceSchema>; labels: Labels }) {
   return (
     <div style={s.expBlock}>
-      <div style={s.timelineDot} />
       <div style={s.expHeader}>
         <span style={s.expRole}>
           <span>{exp.role}</span>
-          {exp.company && <span style={s.expCompany}>{labels.at}{exp.company}</span>}
+          {exp.company && <span style={s.expCompany}> — {exp.company}</span>}
         </span>
         <DateRange start={exp.startDate} end={exp.endDate} present={labels.present} />
       </div>
-      {/* Content is split on \n+ to handle multi-paragraph LLM output */}
       {exp.content && (
         <div style={s.contentText}>
-            {exp.content.split(/\n+/).filter(Boolean).map((para, i) => (
+            {exp.content.split(/\n+/).filter(Boolean).map((para: string, i: number) => (
               <div key={i} style={s.paragraph}>{para}</div>
             ))}
           </div>
@@ -284,10 +224,7 @@ function ExperienceBlock({ exp, labels }: { exp: z.infer<typeof ExperienceSchema
       )}
       {exp.achievements && exp.achievements.length > 0 && (
         <>
-          <div style={s.achievementLabel}>
-            <div style={s.achievementDot} />
-            <span>{labels.keyAchievements}</span>
-          </div>
+          <div style={s.achievementLabel}>{labels.keyAchievements}</div>
           <BulletList items={exp.achievements} />
         </>
       )}
@@ -295,11 +232,9 @@ function ExperienceBlock({ exp, labels }: { exp: z.infer<typeof ExperienceSchema
   )
 }
 
-/** Single project entry — similar layout to ExperienceBlock but with technology pills and URL. */
 function ProjectBlock({ proj, labels }: { proj: z.infer<typeof ProjectSchema>; labels: Labels }) {
   return (
     <div style={s.expBlock}>
-      <div style={s.timelineDot} />
       <div style={s.expHeader}>
         <span style={s.expRole}>
           <span>{proj.name}</span>
@@ -309,23 +244,20 @@ function ProjectBlock({ proj, labels }: { proj: z.infer<typeof ProjectSchema>; l
       </div>
       {proj.description && (
         <div style={s.contentText}>
-            {proj.description.split(/\n+/).filter(Boolean).map((para, i) => (
+            {proj.description.split(/\n+/).filter(Boolean).map((para: string, i: number) => (
               <div key={i} style={s.paragraph}>{para}</div>
             ))}
           </div>
       )}
       {proj.achievements && proj.achievements.length > 0 && (
         <>
-          <div style={s.achievementLabel}>
-            <div style={s.achievementDot} />
-            <span>{labels.keyAchievements}</span>
-          </div>
+          <div style={s.achievementLabel}>{labels.keyAchievements}</div>
           <BulletList items={proj.achievements} />
         </>
       )}
       {proj.technologies && proj.technologies.length > 0 && (
         <div style={s.techWrap}>
-          {proj.technologies.map((t, i) => (
+          {proj.technologies.map((t: string, i: number) => (
             <span key={i} style={s.techPill}>{t}</span>
           ))}
         </div>
@@ -337,12 +269,9 @@ function ProjectBlock({ proj, labels }: { proj: z.infer<typeof ProjectSchema>; l
   )
 }
 
-/**
- * ResumeTemplate — the main resume component.
- * Renders sections in order: header → summary → projects → experience → education → skills → certifications.
- * Uses bilingual labels (CN/EN) based on the name/summary content.
- */
-export function ResumeTemplate({ data }: { data: ResumeData }) {
+// ─── Main component ──────────────────────────────────────────
+
+export function ResumeClassicTemplate({ data }: { data: ResumeData }) {
   const contact = data.contact
   const experience = data.experience || []
   const projects = data.projects || []
@@ -352,27 +281,21 @@ export function ResumeTemplate({ data }: { data: ResumeData }) {
 
   return (
     <div style={s.page}>
-      {/* Header: name, title, contact info joined by bullets */}
+      {/* Centered header */}
       <div style={s.header}>
-        <div style={s.nameRow}>
-          <h1 style={s.name}>{data.name}</h1>
-          {data.title && <span style={s.titleLine}>{data.title}</span>}
-        </div>
+        <h1 style={s.name}>{data.name}</h1>
+        {data.title && <div style={s.titleLine}>{data.title}</div>}
         {contact && (
           <div style={s.contactRow}>
             {[contact.location, contact.email, contact.phone, contact.github, contact.linkedin, contact.website].filter(Boolean).join(' · ')}
           </div>
         )}
-        <div style={s.headerAccent} />
       </div>
 
-      {/* Professional Summary — split on newlines for multi-paragraph LLM output */}
+      {/* Summary */}
       {data.summary && (
-        <div style={s.section}>
-          <div style={s.sectionTitle}>
-            <span>{l.professionalSummary}</span>
-            <div style={s.sectionTitleUnderline} />
-          </div>
+        <div style={s.sectionBox}>
+          <div style={s.sectionTitle}>{l.professionalSummary}</div>
           <div style={s.summary}>
             {data.summary.split(/\n+/).filter(Boolean).map((para, i) => (
               <div key={i} style={s.paragraph}>{para}</div>
@@ -381,39 +304,30 @@ export function ResumeTemplate({ data }: { data: ResumeData }) {
         </div>
       )}
 
-      {/* Projects section (rendered before experience for Chinese resume convention) */}
+      {/* Projects */}
       {projects.length > 0 && (
-        <div style={s.section}>
-          <div style={s.sectionTitle}>
-            <span>{l.projects}</span>
-            <div style={s.sectionTitleUnderline} />
-          </div>
+        <div style={s.sectionBox}>
+          <div style={s.sectionTitle}>{l.projects}</div>
           {projects.map((proj, i) => (
             <ProjectBlock key={i} proj={proj} labels={l} />
           ))}
         </div>
       )}
 
-      {/* Experience section */}
+      {/* Experience */}
       {experience.length > 0 && (
-        <div style={s.section}>
-          <div style={s.sectionTitle}>
-            <span>{l.experience}</span>
-            <div style={s.sectionTitleUnderline} />
-          </div>
+        <div style={s.sectionBox}>
+          <div style={s.sectionTitle}>{l.experience}</div>
           {experience.map((exp, i) => (
             <ExperienceBlock key={i} exp={exp} labels={l} />
           ))}
         </div>
       )}
 
-      {/* Education section */}
+      {/* Education */}
       {education.length > 0 && (
-        <div style={s.section}>
-          <div style={s.sectionTitle}>
-            <span>{l.education}</span>
-            <div style={s.sectionTitleUnderline} />
-          </div>
+        <div style={s.sectionBox}>
+          <div style={s.sectionTitle}>{l.education}</div>
           {education.map((edu, i) => (
             <div key={i} style={s.eduRow}>
               <span>
@@ -428,16 +342,13 @@ export function ResumeTemplate({ data }: { data: ResumeData }) {
         </div>
       )}
 
-      {/* Skills — rendered as colored pills that cycle through pillColors */}
+      {/* Skills */}
       {skills.length > 0 && (
-        <div style={s.section}>
-          <div style={s.sectionTitle}>
-            <span>{l.skills}</span>
-            <div style={s.sectionTitleUnderline} />
-          </div>
+        <div style={s.sectionBox}>
+          <div style={s.sectionTitle}>{l.skills}</div>
           <div style={s.skillsWrap}>
             {skills.map((skill, i) => (
-              <span key={i} style={{ ...s.skillPill, borderColor: pillColors[i % pillColors.length].border, color: pillColors[i % pillColors.length].text }}>{skill}</span>
+              <span key={i} style={s.skillPill}>{skill}</span>
             ))}
           </div>
         </div>
@@ -445,11 +356,8 @@ export function ResumeTemplate({ data }: { data: ResumeData }) {
 
       {/* Certifications */}
       {data.certifications && data.certifications.length > 0 && (
-        <div style={s.section}>
-          <div style={s.sectionTitle}>
-            <span>{l.certifications}</span>
-            <div style={s.sectionTitleUnderline} />
-          </div>
+        <div style={s.sectionBox}>
+          <div style={s.sectionTitle}>{l.certifications}</div>
           {data.certifications.map((cert, i) => (
             <div key={i} style={s.certLine}>
               <strong>{cert.name}</strong>

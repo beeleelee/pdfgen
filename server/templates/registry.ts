@@ -6,15 +6,21 @@
 import React from 'react'
 import { z } from 'zod'
 import { InvoiceTemplate, InvoiceDataSchema } from './invoice.js'
-import { ResumeTemplate, ResumeDataSchema } from './resume.js'
+import { ResumeTemplate } from './resume.js'
+import { ResumeDataSchema } from './resume-shared.js'
+import { ResumeClassicTemplate } from './resume-classic.js'
+import { ResumeMinimalTemplate } from './resume-minimal.js'
 import { LetterTemplate, LetterDataSchema } from './letter.js'
 
 /** A registered template with component, schema, and docs for the LLM. */
 export interface TemplateEntry {
+  /** Default component (used when no style is specified). */
   component: React.FC<{ data: any }>
   schema: z.ZodTypeAny
   description: string
   dataDescription: string
+  /** Named style variants keyed by style name. For example, resume supports "classic" and "minimal". */
+  styles?: Record<string, React.FC<{ data: any }>>
 }
 
 export const templateRegistry = new Map<string, TemplateEntry>()
@@ -38,12 +44,19 @@ templateRegistry.set('invoice', {
   - notes? (string)`,
 })
 
-// ─── Resume template ────────────────────────────────────────────
+// ─── Resume template (with style variants) ──────────────────────
+// Default style is "modern" (blue gradient header, timeline layout).
+// Additional styles: "classic" (serif, bordered boxes), "minimal" (clean, thin HR separators).
 templateRegistry.set('resume', {
   component: ResumeTemplate as React.FC<{ data: any }>,
   schema: ResumeDataSchema,
-  description: 'Resume/CV template for creating professional resumes with experience, education, skills, and projects',
-  dataDescription: `Fields:
+  styles: {
+    classic: ResumeClassicTemplate as React.FC<{ data: any }>,
+    minimal: ResumeMinimalTemplate as React.FC<{ data: any }>,
+  },
+  description: 'Resume/CV template for creating professional resumes with experience, education, skills, and projects. Supports style variants: modern (default), classic, minimal.',
+  dataDescription: `Styles: modern (default), classic, minimal
+Fields:
   - name (string, REQUIRED): Full name of the person
   - title? (string): Professional headline
   - contact?: { email?, phone?, linkedin?, website?, github?, location? }
